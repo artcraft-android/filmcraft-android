@@ -10,7 +10,7 @@ AutoName: FilmCraft
 
 RepoType: git
 Repo: https://github.com/artcraft-android/filmcraft-android.git
-Binaries:
+Binaries: 
   https://github.com/artcraft-android/filmcraft-android/releases/download/v%v/filmcraft-android-%v.apk
 
 Builds:
@@ -33,13 +33,13 @@ Builds:
       - filmcraft.abis=arm64-v8a
       - filmcraft.unsigned=true
 
-AllowedAPKSigningKeys: 7356d58ae3446b3e6cc457d0b9901700376c787310c9dba14e9c11866588eeb5
+AllowedAPKSigningKeys: 75c802d4487299b7a5ff236077b90aed19124ca49fe046b381d467af038ceff2
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
 VercodeOperation:
   - '%c * 10 + 2'
-UpdateCheckData:
+UpdateCheckData: 
   apps/filmcraft-android/android/gradle.properties|filmcraft\.versionCode=(\d+)|.|filmcraft\.version=(.+)
 CurrentVersion: 0.0.2-beta
 CurrentVersionCode: 2012

@@ -37,5 +37,6 @@ Releases are built by the release workflow on Linux, as F-Droid's are.
    gradle.properties. Publish the draft release it makes.
 4. F-Droid's update check finds the tag and adds the build itself (`AutoUpdateMode: Version`).
 
-The release key's certificate SHA-256 (`AllowedAPKSigningKeys`):
-`7356d58ae3446b3e6cc457d0b9901700376c787310c9dba14e9c11866588eeb5`.
+The release key is the shared `artcraft-android` key (`CN=artcraft-android`), the one every
+artcraft-android app signs with. Its certificate SHA-256 (`AllowedAPKSigningKeys`):
+`75c802d4487299b7a5ff236077b90aed19124ca49fe046b381d467af038ceff2`.
