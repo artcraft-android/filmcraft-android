@@ -36,7 +36,7 @@ fn add_scene(s: &mut Sample, scene: DemoScene, seconds: f64) -> ItemId {
         proxy: None,
         identity: None,
     };
-    let item = s.project.add_item("sample", Label::Iris, ItemKind::Media(clip), None);
+    let item = s.project.add_item("sample", Label::Iris, ItemKind::Media(Box::new(clip)), None);
     s.sources.insert(item, Arc::new(src));
     item
 }
