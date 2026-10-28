@@ -108,7 +108,7 @@ jobs:
               --ks-pass env:FILMCRAFT_KEYSTORE_PASSWORD --key-pass env:FILMCRAFT_KEY_PASSWORD \
               --lineage .github/signing/lightcraft-to-artcraft.lineage --rotation-min-sdk-version 28 \
               --v1-signing-enabled false --v2-signing-enabled false --v3-signing-enabled true \
-              --alignment-preserved true "$apk"
+              --v4-signing-enabled false --alignment-preserved true "$apk"
           done
 
       - name: APK
