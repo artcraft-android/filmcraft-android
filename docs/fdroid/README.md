@@ -40,3 +40,9 @@ Releases are built by the release workflow on Linux, as F-Droid's are.
 The release key is the shared `artcraft-android` key (`CN=artcraft-android`), the one every
 artcraft-android app signs with. Its certificate SHA-256 (`AllowedAPKSigningKeys`):
 `75c802d4487299b7a5ff236077b90aed19124ca49fe046b381d467af038ceff2`.
+
+v0.0.1-beta was signed with an older key (`CN=LightCraft for Android`, SHA-256
+`7356d58ae3446b3e6cc457d0b9901700376c787310c9dba14e9c11866588eeb5`). Every later APK is signed
+with APK Signature Scheme v3 alone and carries the key's lineage (`.github/signing/`, public: it
+holds certificates and the old key's signature over the new one), so installed copies of
+v0.0.1-beta update. v3 alone keeps one certificate in the APK, the one F-Droid checks.

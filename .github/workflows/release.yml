@@ -74,32 +74,56 @@ jobs:
             printf '%s' "$KEYSTORE_BASE64" | base64 -d >"$RUNNER_TEMP/release.p12"
             echo "FILMCRAFT_KEYSTORE=$RUNNER_TEMP/release.p12" >>"$GITHUB_ENV"
           elif [ "$GITHUB_REF_TYPE" = tag ]; then
-            echo "::error::No release key: a release is never signed with the debug key"
+            echo "::error::No release key: a release is never unsigned"
             exit 1
           else
-            echo "::warning::No release key: this dry run is signed with the debug key"
+            echo "::warning::No release key: this dry run's APK stays unsigned"
           fi
 
+      # unsigned, exactly as F-Droid builds it; the next step signs it
       - name: Build
         working-directory: apps/filmcraft-android/android
         env:
           VERSION: ${{ steps.v.outputs.version }}
+        run: |
+          ./gradlew assembleRelease "-Pfilmcraft.abis=arm64-v8a" "-Pfilmcraft.version=$VERSION" -Pfilmcraft.unsigned=true --no-daemon
+          mkdir -p "$GITHUB_WORKSPACE/dist"
+          cp app/build/outputs/apk/release/app-release-unsigned.apk "$GITHUB_WORKSPACE/dist/filmcraft-android-$VERSION.apk"
+
+      # v0.0.1-beta was signed with an older key (CN=LightCraft for Android). Every APK since carries
+      # the lineage that hands it over to the shared artcraft-android key (APK Signature Scheme v3),
+      # so installed copies update. v3 alone: the app needs Android 10 and v3 works from Android 9,
+      # while v2 would need the old key and F-Droid refuses an APK whose v2 and v3 keys differ. The
+      # ZIP layout stays Gradle's, so F-Droid can copy this signature onto its own build.
+      - name: Sign
+        if: env.FILMCRAFT_KEYSTORE != ''
+        env:
           FILMCRAFT_KEYSTORE_PASSWORD: ${{ secrets.FILMCRAFT_KEYSTORE_PASSWORD }}
           FILMCRAFT_KEY_ALIAS: ${{ secrets.FILMCRAFT_KEY_ALIAS }}
           FILMCRAFT_KEY_PASSWORD: ${{ secrets.FILMCRAFT_KEY_PASSWORD }}
         run: |
-          ./gradlew assembleRelease "-Pfilmcraft.abis=arm64-v8a" "-Pfilmcraft.version=$VERSION" --no-daemon
-          mkdir -p "$GITHUB_WORKSPACE/dist"
-          cp app/build/outputs/apk/release/app-release.apk "$GITHUB_WORKSPACE/dist/filmcraft-android-$VERSION.apk"
+          apksigner="$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -n 1)apksigner"
+          for apk in dist/*.apk; do
+            "$apksigner" sign --ks "$FILMCRAFT_KEYSTORE" --ks-key-alias "$FILMCRAFT_KEY_ALIAS" \
+              --ks-pass env:FILMCRAFT_KEYSTORE_PASSWORD --key-pass env:FILMCRAFT_KEY_PASSWORD \
+              --lineage .github/signing/lightcraft-to-artcraft.lineage --rotation-min-sdk-version 28 \
+              --v1-signing-enabled false --v2-signing-enabled false --v3-signing-enabled true \
+              --alignment-preserved true "$apk"
+          done
 
       - name: APK
         run: |
           apksigner="$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -n 1)apksigner"
           echo >>"$GITHUB_STEP_SUMMARY"
           for apk in dist/*.apk; do
+            if [ -z "$FILMCRAFT_KEYSTORE" ]; then
+              echo "::warning::No release key: $apk is unsigned"
+              continue
+            fi
             certs="$("$apksigner" verify --print-certs "$apk")"
-            if [ "$GITHUB_REF_TYPE" = tag ] && grep -q "CN=Android Debug" <<<"$certs"; then
-              echo "::error::$apk is signed with the debug key"
+            # the lineage must name v0.0.1-beta's key, or installed copies can't update
+            if ! "$apksigner" lineage --in "$apk" --print-certs | grep -q "CN=LightCraft for Android"; then
+              echo "::error::$apk has no lineage from the old key"
               exit 1
             fi
             {
