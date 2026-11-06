@@ -39,9 +39,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.artcraftandroid.filmcraft.R
 import io.github.artcraftandroid.filmcraft.core.CaptionLook
 import io.github.artcraftandroid.filmcraft.core.CaptionPosition
 import io.github.artcraftandroid.filmcraft.core.ModelPackage
@@ -77,13 +79,20 @@ import kotlinx.coroutines.withContext
 
 /** Languages captions can be made in (Whisper knows many more; these are the common ones). */
 private val LANGUAGES = listOf(
-    "auto" to "Detect", "en" to "English", "es" to "Spanish", "fr" to "French", "de" to "German", "it" to "Italian",
-    "pt" to "Portuguese", "nl" to "Dutch", "pl" to "Polish", "tr" to "Turkish", "ru" to "Russian", "uk" to "Ukrainian",
-    "ar" to "Arabic", "hi" to "Hindi", "ja" to "Japanese", "ko" to "Korean", "zh" to "Chinese",
+    "auto" to R.string.speech_language_auto, "en" to R.string.speech_language_en,
+    "es" to R.string.speech_language_es, "fr" to R.string.speech_language_fr,
+    "de" to R.string.speech_language_de, "it" to R.string.speech_language_it,
+    "pt" to R.string.speech_language_pt, "nl" to R.string.speech_language_nl,
+    "pl" to R.string.speech_language_pl, "tr" to R.string.speech_language_tr,
+    "ru" to R.string.speech_language_ru, "uk" to R.string.speech_language_uk,
+    "ar" to R.string.speech_language_ar, "hi" to R.string.speech_language_hi,
+    "ja" to R.string.speech_language_ja, "ko" to R.string.speech_language_ko,
+    "zh" to R.string.speech_language_zh,
 )
 
 /** The speech models by what they are good at. */
-private fun modelLabel(id: String) = if (id == "whisper-tiny") "Faster" else "More accurate"
+@Composable
+private fun modelLabel(id: String) = stringResource(if (id == "whisper-tiny") R.string.speech_model_faster else R.string.speech_model_more_accurate)
 
 private fun prefs(ctx: Context) = ctx.getSharedPreferences("speech", Context.MODE_PRIVATE)
 
@@ -107,22 +116,22 @@ fun CaptionsPanel(ed: EditorController, close: () -> Unit, modifier: Modifier = 
         if (m.installed) ed.makeCaptions(model, language) else asking = m
     }
     ToolPanel(
-        "Captions", close, modifier, tag = "captions_panel",
-        actions = { PanelAction(LucideIcons.Trash2.glyph(), "Delete all captions", { ed.deleteCaptions() }, enabled = has && running == null, tag = "captions_delete_all_button") },
+        stringResource(R.string.speech_panel_captions), close, modifier, tag = "captions_panel",
+        actions = { PanelAction(LucideIcons.Trash2.glyph(), stringResource(R.string.speech_delete_all_captions), { ed.deleteCaptions() }, enabled = has && running == null, tag = "captions_delete_all_button") },
     ) {
         val pad = Modifier.padding(horizontal = FcSize.PanelPadding)
         Column(Modifier.fillMaxWidth()) {
             when {
-                running != null -> Column(pad) { ProgressBlock(running.stage, running.progress.toFloat(), "Stop", tag = "captions_stop_button") { ed.cancelCaptions() } }
+                running != null -> Column(pad) { ProgressBlock(running.stage, running.progress.toFloat(), stringResource(R.string.speech_stop), tag = "captions_stop_button") { ed.cancelCaptions() } }
                 download != null && models.any { it.id == download.id } -> Column(pad) { DownloadBlock(download) }
                 else -> {
-                    Text("Spoken language", style = FcType.Label, color = Fc.Secondary, modifier = pad)
+                    Text(stringResource(R.string.speech_spoken_language), style = FcType.Label, color = Fc.Secondary, modifier = pad)
                     Spacer(Modifier.height(8.dp))
                     ChipRow {
-                        for ((id, name) in LANGUAGES) SelectChip(name, language == id, { language = id }, tag = "captions_language_$id")
+                        for ((id, nameRes) in LANGUAGES) SelectChip(stringResource(nameRes), language == id, { language = id }, tag = "captions_language_$id")
                     }
                     Spacer(Modifier.height(16.dp))
-                    Text("Speech model", style = FcType.Label, color = Fc.Secondary, modifier = pad)
+                    Text(stringResource(R.string.speech_speech_model), style = FcType.Label, color = Fc.Secondary, modifier = pad)
                     Spacer(Modifier.height(8.dp))
                     ChipRow {
                         for (m in models) {
@@ -131,9 +140,9 @@ fun CaptionsPanel(ed: EditorController, close: () -> Unit, modifier: Modifier = 
                         }
                     }
                     Spacer(Modifier.height(16.dp))
-                    PrimaryButton(if (has) "Make captions again" else "Make captions", { go() }, modifier = pad, enabled = models.isNotEmpty(), tag = "captions_make_button")
+                    PrimaryButton(stringResource(if (has) R.string.speech_make_captions_again else R.string.speech_make_captions), { go() }, modifier = pad, enabled = models.isNotEmpty(), tag = "captions_make_button")
                     Spacer(Modifier.height(8.dp))
-                    Text("Captions are made on this phone. The sound never leaves it.", style = FcType.BodySmall, color = Fc.Detail, modifier = pad)
+                    Text(stringResource(R.string.speech_on_device_note), style = FcType.BodySmall, color = Fc.Detail, modifier = pad)
                 }
             }
             Spacer(Modifier.height(12.dp))
@@ -142,7 +151,7 @@ fun CaptionsPanel(ed: EditorController, close: () -> Unit, modifier: Modifier = 
         if (has && l != null && running == null) {
             HorizontalDivider(color = Fc.Divider, thickness = 1.dp)
             Spacer(Modifier.height(12.dp))
-            SliderRow("Size", "${(l.scale * 100).roundToInt()}%") {
+            SliderRow(stringResource(R.string.speech_label_size), "${(l.scale * 100).roundToInt()}%") {
                 FcSlider(
                     fraction = ((l.scale - 0.5) / 1.5).toFloat(),
                     onChange = { f ->
@@ -151,19 +160,19 @@ fun CaptionsPanel(ed: EditorController, close: () -> Unit, modifier: Modifier = 
                         ed.setCaptionLook(v, merge = true)
                     },
                     snapTo = (0.5f / 1.5f),
-                    description = "Caption size",
+                    description = stringResource(R.string.speech_caption_size_desc),
                     tag = "captions_size_slider",
                 )
             }
             Row(Modifier.fillMaxWidth().padding(horizontal = FcSize.PanelPadding, vertical = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                for ((p, name) in listOf(CaptionPosition.TOP to "Top", CaptionPosition.MIDDLE to "Middle", CaptionPosition.BOTTOM to "Bottom")) {
-                    SelectChip(name, l.position == p, {
+                for ((p, nameRes) in listOf(CaptionPosition.TOP to R.string.speech_position_top, CaptionPosition.MIDDLE to R.string.speech_position_middle, CaptionPosition.BOTTOM to R.string.speech_position_bottom)) {
+                    SelectChip(stringResource(nameRes), l.position == p, {
                         val v = l.copy(position = p)
                         look = v
                         ed.setCaptionLook(v, merge = false)
-                    }, tag = "captions_position_${name.lowercase()}")
+                    }, tag = "captions_position_${p.name.lowercase()}")
                 }
-                SelectChip("Box", l.background, {
+                SelectChip(stringResource(R.string.speech_box), l.background, {
                     val v = l.copy(background = !l.background)
                     look = v
                     ed.setCaptionLook(v, merge = false)
@@ -174,8 +183,8 @@ fun CaptionsPanel(ed: EditorController, close: () -> Unit, modifier: Modifier = 
     }
     asking?.let { m ->
         DownloadDialog(
-            title = "Download the speech model?",
-            text = "Captions are made by a speech model on the phone (OpenAI's Whisper, MIT licence). It's ${megabytes(m.missing.toLong())}, downloaded once from Hugging Face, then works offline.",
+            title = stringResource(R.string.speech_download_model_title),
+            text = stringResource(R.string.speech_download_model_text, megabytes(m.missing.toLong())),
             onDismiss = { asking = null },
             onConfirm = {
                 asking = null
@@ -218,15 +227,15 @@ private fun DownloadBlock(d: ModelDownloads.State) {
     if (d.error != null) {
         Text(d.error, style = FcType.Body, color = Fc.Body)
         Spacer(Modifier.height(16.dp))
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) { DialogButton("OK", { ModelDownloads.dismiss() }, filled = true) }
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) { DialogButton(stringResource(R.string.speech_ok), { ModelDownloads.dismiss() }, filled = true) }
     } else {
-        ProgressBlock("Downloading ${d.name}… ${megabytes(d.done)} of ${megabytes(d.total)}", d.fraction, "Cancel", tag = "model_download_cancel_button") { ModelDownloads.cancel() }
+        ProgressBlock(stringResource(R.string.speech_downloading, d.name, megabytes(d.done), megabytes(d.total)), d.fraction, stringResource(R.string.speech_cancel), tag = "model_download_cancel_button") { ModelDownloads.cancel() }
     }
 }
 
 @Composable
 private fun DownloadDialog(title: String, text: String, onDismiss: () -> Unit, onConfirm: () -> Unit) {
-    FcDialog(title, "Download", onConfirm, onDismiss) {
+    FcDialog(title, stringResource(R.string.speech_download), onConfirm, onDismiss, dismiss = stringResource(R.string.speech_cancel)) {
         Text(text, style = FcType.Body, color = Fc.Body)
     }
 }
@@ -294,7 +303,7 @@ fun SpeechPanel(ed: EditorController, panel: Panel.Speech, close: () -> Unit, mo
     }
     fun settings() = SpeechSettings(text.trim(), voice, pace, pitch)
     val usable = all.filter { it.installed }
-    ToolPanel(if (panel.clip == null) "Text to speech" else "Edit speech", close, modifier.imePadding(), tag = "speech_panel") {
+    ToolPanel(stringResource(if (panel.clip == null) R.string.speech_panel_tts else R.string.speech_panel_edit_speech), close, modifier.imePadding(), tag = "speech_panel") {
         val pad = Modifier.padding(horizontal = FcSize.PanelPadding)
         Column(Modifier.fillMaxWidth()) {
             BasicTextField(
@@ -311,18 +320,18 @@ fun SpeechPanel(ed: EditorController, panel: Panel.Speech, close: () -> Unit, mo
                     .padding(horizontal = 14.dp, vertical = 12.dp)
                     .testTag("speech_text_field"),
                 decorationBox = { inner ->
-                    if (text.isEmpty()) Text("Type what to say", style = FcType.Label.copy(fontSize = 17.sp), color = Fc.Detail)
+                    if (text.isEmpty()) Text(stringResource(R.string.speech_placeholder_type), style = FcType.Label.copy(fontSize = 17.sp), color = Fc.Detail)
                     inner()
                 },
             )
             Spacer(Modifier.height(16.dp))
-            Text("Voice", style = FcType.Label, color = Fc.Secondary, modifier = pad)
+            Text(stringResource(R.string.speech_label_voice), style = FcType.Label, color = Fc.Secondary, modifier = pad)
             Spacer(Modifier.height(8.dp))
             ChipRow {
                 for (v in usable) SelectChip(v.name, voice == v.id, { voice = v.id }, tag = "speech_voice_${v.id}")
                 val p = pkg
                 if (p != null && !p.installed && download == null) {
-                    SelectChip("Natural voices · ${megabytes(p.missing.toLong())}", false, { asking = true }, tag = "speech_get_natural_voices")
+                    SelectChip(stringResource(R.string.speech_natural_voices, megabytes(p.missing.toLong())), false, { asking = true }, tag = "speech_get_natural_voices")
                 }
             }
             if (download != null && download.id == pkg?.id) {
@@ -331,27 +340,31 @@ fun SpeechPanel(ed: EditorController, panel: Panel.Speech, close: () -> Unit, mo
             }
         }
         Spacer(Modifier.height(8.dp))
-        SliderRow("Pace", "%.2f×".format(pace)) {
+        SliderRow(stringResource(R.string.speech_label_pace), "%.2f×".format(pace)) {
             FcSlider(
                 fraction = ((pace - 0.5) / 1.5).toFloat(),
                 onChange = { f -> pace = Math.round((0.5 + f * 1.5) * 20) / 20.0 },
                 snapTo = 0.5f / 1.5f,
-                description = "Pace",
+                description = stringResource(R.string.speech_desc_pace),
                 tag = "speech_pace_slider",
             )
         }
-        SliderRow("Pitch", listOf("Lowest", "Low", "Normal", "High", "Highest")[pitch + 2]) {
+        SliderRow(stringResource(R.string.speech_label_pitch), listOf(
+            stringResource(R.string.speech_pitch_lowest), stringResource(R.string.speech_pitch_low),
+            stringResource(R.string.speech_pitch_normal), stringResource(R.string.speech_pitch_high),
+            stringResource(R.string.speech_pitch_highest),
+        )[pitch + 2]) {
             FcSlider(
                 fraction = (pitch + 2) / 4f,
                 onChange = { f -> pitch = (f * 4).roundToInt() - 2 },
                 ticks = listOf(0.25f, 0.5f, 0.75f),
-                description = "Pitch",
+                description = stringResource(R.string.speech_desc_pitch),
                 tag = "speech_pitch_slider",
             )
         }
         Row(Modifier.fillMaxWidth().padding(horizontal = FcSize.PanelPadding, vertical = 12.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Box(Modifier.testTag("speech_listen_button")) {
-                DialogButton(if (hearing != null) "Making…" else "Listen", {
+                DialogButton(if (hearing != null) stringResource(R.string.speech_making) else stringResource(R.string.speech_listen), {
                     if (text.isBlank() || hearing != null) return@DialogButton
                     hearing = scope.launch {
                         try {
@@ -362,7 +375,7 @@ fun SpeechPanel(ed: EditorController, panel: Panel.Speech, close: () -> Unit, mo
                     }
                 }, filled = false, enabled = text.isNotBlank())
             }
-            PrimaryButton(if (panel.clip == null) "Add" else "Save", {
+            PrimaryButton(stringResource(if (panel.clip == null) R.string.speech_add else R.string.speech_save), {
                 prefs(ctx).edit().putString("voice", voice).apply()
                 player.stop()
                 ed.saySpeech(panel.clip, settings())
@@ -373,8 +386,8 @@ fun SpeechPanel(ed: EditorController, panel: Panel.Speech, close: () -> Unit, mo
     val p = pkg
     if (asking && p != null) {
         DownloadDialog(
-            title = "Download natural voices?",
-            text = "Natural-sounding English voices (Kokoro, Apache licence). They're ${megabytes(p.missing.toLong())}, downloaded once from Hugging Face, then work offline.",
+            title = stringResource(R.string.speech_download_voices_title),
+            text = stringResource(R.string.speech_download_voices_text, megabytes(p.missing.toLong())),
             onDismiss = { asking = false },
             onConfirm = {
                 asking = false

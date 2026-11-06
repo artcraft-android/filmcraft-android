@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="misc_mic_permission_needed">FilmCraft needs the microphone to record a voice-over. You can allow it in Settings.</string>
+    <string name="misc_no_app_for_action">No app on this phone can do that.</string>
+    <string name="misc_not_allowed">FilmCraft isn\'t allowed to do that.</string>
+    <string name="misc_close_panel">Close panel</string>
+    <string name="misc_cancel">Cancel</string>
+</resources>

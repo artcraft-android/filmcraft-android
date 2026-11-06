@@ -30,6 +30,13 @@ object ModelDownloads {
         val fraction: Float get() = if (total > 0) (done.toDouble() / total).toFloat().coerceIn(0f, 1f) else 0f
     }
 
+    /** Set once at startup so download errors can be localized. */
+    @Volatile
+    internal var appContext: android.content.Context? = null
+
+    private fun str(id: Int, vararg args: Any): String =
+        appContext?.getString(id, *args) ?: "Something went wrong."
+
     var state by mutableStateOf<State?>(null)
         private set
 
@@ -51,7 +58,7 @@ object ModelDownloads {
                 state = null
                 throw e
             } catch (e: Exception) {
-                state = state?.copy(error = e.message?.takeIf { it.isNotBlank() } ?: "The download failed.")
+                state = state?.copy(error = e.message?.takeIf { it.isNotBlank() } ?: str(io.github.artcraftandroid.filmcraft.R.string.core_download_failed))
             }
         }
     }
@@ -69,7 +76,7 @@ object ModelDownloads {
 
     private suspend fun download(pkg: ModelPackage) = withContext(Dispatchers.IO) {
         val dir = File(pkg.dir).apply { mkdirs() }
-        if (!dir.isDirectory) throw IOException("The app's folder for models can't be used.")
+        if (!dir.isDirectory) throw IOException(str(io.github.artcraftandroid.filmcraft.R.string.core_models_folder_unusable))
         var done = 0L
         val total = pkg.missing.toLong()
         for (f in pkg.files) {
@@ -99,7 +106,7 @@ object ModelDownloads {
             try {
                 val code = conn.responseCode
                 val append = code == HttpURLConnection.HTTP_PARTIAL && have > 0
-                if (code != HttpURLConnection.HTTP_OK && code != HttpURLConnection.HTTP_PARTIAL) throw IOException("The download failed (HTTP $code). Try again later.")
+                if (code != HttpURLConnection.HTTP_OK && code != HttpURLConnection.HTTP_PARTIAL) throw IOException(str(io.github.artcraftandroid.filmcraft.R.string.core_download_failed_http, code))
                 if (!append && have > 0) {
                     // the server started over: so do we
                     done -= have
@@ -117,7 +124,7 @@ object ModelDownloads {
                             sha.update(buf, 0, n)
                             have += n
                             done += n
-                            if (have > f.size.toLong()) throw IOException("${f.name} is bigger than expected.")
+                            if (have > f.size.toLong()) throw IOException(str(io.github.artcraftandroid.filmcraft.R.string.core_file_too_big, f.name))
                             state = state?.copy(done = done.coerceAtMost(total))
                         }
                     }
@@ -128,9 +135,9 @@ object ModelDownloads {
             val hex = sha.digest().joinToString("") { "%02x".format(it) }
             if (have != f.size.toLong() || !hex.equals(f.sha256, ignoreCase = true)) {
                 part.delete()
-                throw IOException("${f.name} didn't download correctly. Try again.")
+                throw IOException(str(io.github.artcraftandroid.filmcraft.R.string.core_file_bad_download, f.name))
             }
-            if (!part.renameTo(target)) throw IOException("${f.name} couldn't be saved.")
+            if (!part.renameTo(target)) throw IOException(str(io.github.artcraftandroid.filmcraft.R.string.core_file_save_failed, f.name))
         }
     }
 }

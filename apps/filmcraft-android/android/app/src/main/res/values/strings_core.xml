@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="core_untitled_project">Untitled</string>
+    <string name="core_file_could_not_read">The file could not be read.</string>
+    <string name="core_project_copy">%1$s copy</string>
+    <string name="core_editor_still_starting">The editor is still starting.</string>
+    <string name="core_editor_could_not_start">The editor couldn\'t start.</string>
+    <string name="core_not_enough_space">There isn\'t enough space on the phone for this video. Free some space or lower the resolution or quality.</string>
+    <string name="core_export_failed">The export failed.</string>
+    <string name="core_video_could_not_save">The video couldn\'t be saved to the phone.</string>
+    <string name="core_something_went_wrong">Something went wrong.</string>
+    <string name="core_download_failed">The download failed.</string>
+    <string name="core_models_folder_unusable">The app\'s folder for models can\'t be used.</string>
+    <string name="core_download_failed_http">The download failed (HTTP %1$d). Try again later.</string>
+    <string name="core_file_too_big">%1$s is bigger than expected.</string>
+    <string name="core_file_bad_download">%1$s didn\'t download correctly. Try again.</string>
+    <string name="core_file_save_failed">%1$s couldn\'t be saved.</string>
+    <string name="core_adding_media">Adding media…</string>
+    <string name="core_file_cannot_add">That file can\'t be added.</string>
+    <string name="core_some_files_cannot_add">Some files couldn\'t be added.</string>
+    <string name="core_replacing">Replacing…</string>
+    <string name="core_making_speech">Making speech…</string>
+    <string name="core_getting_ready">Getting ready…</string>
+    <string name="core_no_speech_heard">No speech was heard, so there are no captions.</string>
+    <string name="core_export_needs_frames">Add at least a few frames to the timeline to export.</string>
+</resources>

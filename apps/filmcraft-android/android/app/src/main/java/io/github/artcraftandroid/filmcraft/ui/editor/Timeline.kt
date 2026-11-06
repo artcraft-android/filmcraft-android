@@ -87,6 +87,9 @@ fun Timeline(ed: EditorController, modifier: Modifier = Modifier, compact: Boole
     val density = LocalDensity.current
     val measurer = rememberTextMeasurer()
     val haptic = LocalHapticFeedback.current
+    val timelineDesc = stringResource(R.string.editor_timeline)
+    val addMediaDesc = stringResource(R.string.editor_add_media)
+    val missingMediaLabel = stringResource(R.string.editor_missing_media)
     var trim by remember { mutableStateOf<TrimDrag?>(null) }
     var move by remember { mutableStateOf<MoveDrag?>(null) }
     var scrollY by remember { mutableStateOf(0f) }
@@ -102,7 +105,7 @@ fun Timeline(ed: EditorController, modifier: Modifier = Modifier, compact: Boole
             Canvas(
                 Modifier
                     .fillMaxSize()
-                    .semantics { contentDescription = "Timeline" }
+                    .semantics { contentDescription = timelineDesc }
                     .pointerInput(t.revision, w, h) {
                         val touchSlop = viewConfiguration.touchSlop
                         val longPress = viewConfiguration.longPressTimeoutMillis
@@ -212,7 +215,7 @@ fun Timeline(ed: EditorController, modifier: Modifier = Modifier, compact: Boole
                         }
                     },
             ) {
-                drawTimeline(geo, ed, measurer, trim, move)
+                drawTimeline(geo, ed, measurer, trim, move, missingMediaLabel)
             }
             // the add-media button, at the right end of the main track
             val mainTop = geo.mainTop
@@ -233,7 +236,7 @@ fun Timeline(ed: EditorController, modifier: Modifier = Modifier, compact: Boole
                             .background(Fc.Accent)
                             .clickable { ed.addMedia(PickKind.PhotosAndVideos) }
                             .testTag("add_to_timeline_button")
-                            .semantics { contentDescription = "Add media" },
+                            .semantics { contentDescription = addMediaDesc },
                         contentAlignment = Alignment.Center,
                     ) {
                         GlyphIcon(LucideIcons.Plus.glyph(), Color.White, size = 20.dp)
@@ -411,7 +414,7 @@ private class Geometry(
     }
 }
 
-private fun DrawScope.drawTimeline(g: Geometry, ed: EditorController, measurer: androidx.compose.ui.text.TextMeasurer, trim: TrimDrag?, move: MoveDrag?) {
+private fun DrawScope.drawTimeline(g: Geometry, ed: EditorController, measurer: androidx.compose.ui.text.TextMeasurer, trim: TrimDrag?, move: MoveDrag?, missingMediaLabel: String) {
     val dp = g.dp
     @Suppress("UNUSED_VARIABLE") val version = ed.media.version
     val sel = ed.timeline?.selected
@@ -440,7 +443,7 @@ private fun DrawScope.drawTimeline(g: Geometry, ed: EditorController, measurer: 
                     continue
                 }
                 if (r.right < 0 || r.left > size.width) continue
-                drawClip(ed, lane, c, r, c.id == sel, dp, measurer)
+                drawClip(ed, lane, c, r, c.id == sel, dp, measurer, missingMediaLabel = missingMediaLabel)
             }
         }
         // transitions between main-track clips, and the ends
@@ -463,7 +466,7 @@ private fun DrawScope.drawTimeline(g: Geometry, ed: EditorController, measurer: 
             for ((i, lane) in g.t.lanes.withIndex()) {
                 val c = lane.clips.firstOrNull { it.id == move.clip } ?: continue
                 val r = g.rectOf(i, c).translate(move.dx, move.dy)
-                drawClip(ed, lane, c, r, true, dp, measurer, alpha = 0.85f)
+                drawClip(ed, lane, c, r, true, dp, measurer, alpha = 0.85f, missingMediaLabel = missingMediaLabel)
             }
         }
         // edge shades
@@ -509,6 +512,7 @@ private fun DrawScope.drawClip(
     selected: Boolean,
     dp: Float,
     measurer: androidx.compose.ui.text.TextMeasurer,
+    missingMediaLabel: String,
     alpha: Float = 1f,
 ) {
     val colors = when {
@@ -586,7 +590,7 @@ private fun DrawScope.drawClip(
                 drawText(lay, topLeft = Offset(x0 + 4 * dp, r.top + 5 * dp))
             }
             ClipKind.MISSING -> {
-                val lay = measurer.measure("Missing media", TextStyle(fontFamily = Inter, fontSize = 11.sp, color = colors.content), maxLines = 1)
+                val lay = measurer.measure(missingMediaLabel, TextStyle(fontFamily = Inter, fontSize = 11.sp, color = colors.content), maxLines = 1)
                 drawText(lay, topLeft = Offset(max(r.left, 0f) + 8 * dp, r.top + 4 * dp))
             }
             else -> {}

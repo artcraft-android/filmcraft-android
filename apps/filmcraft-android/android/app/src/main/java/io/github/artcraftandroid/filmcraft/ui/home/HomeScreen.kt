@@ -52,6 +52,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -79,6 +80,7 @@ import kotlinx.coroutines.withContext
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun HomeScreen(vm: AppViewModel) {
+    val newProjectDesc = stringResource(R.string.home_new_project)
     Box(Modifier.fillMaxSize().background(Fc.Black).windowInsetsPadding(WindowInsets.displayCutout.union(WindowInsets.navigationBars).only(WindowInsetsSides.Horizontal)).testTag("screen_home")) {
         Column(Modifier.fillMaxSize().statusBarsPadding().verticalScroll(rememberScrollState())) {
             HomeTopBar(vm)
@@ -88,13 +90,13 @@ fun HomeScreen(vm: AppViewModel) {
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 maxItemsInEachRow = 4,
             ) {
-                QuickTile(LucideIcons.Images.glyph(), "From your photo library", "from_your_photo_library") { vm.newProject(NewProject.PhotoLibrary) }
-                QuickTile(LucideIcons.FilePlus.glyph(), "New from files", "new_from_files") { vm.newProject(NewProject.Files) }
-                QuickTile(LucideIcons.SquarePlus.glyph(), "New blank project", "new_blank_project") { vm.newProject(NewProject.Blank) }
-                QuickTile(LucideIcons.AudioLines.glyph(), "Extract audio", "extract_audio_button") { vm.newProject(NewProject.ExtractAudio) }
+                QuickTile(LucideIcons.Images.glyph(), stringResource(R.string.home_from_photo_library), "from_your_photo_library") { vm.newProject(NewProject.PhotoLibrary) }
+                QuickTile(LucideIcons.FilePlus.glyph(), stringResource(R.string.home_new_from_files), "new_from_files") { vm.newProject(NewProject.Files) }
+                QuickTile(LucideIcons.SquarePlus.glyph(), stringResource(R.string.home_new_blank_project), "new_blank_project") { vm.newProject(NewProject.Blank) }
+                QuickTile(LucideIcons.AudioLines.glyph(), stringResource(R.string.home_extract_audio), "extract_audio_button") { vm.newProject(NewProject.ExtractAudio) }
             }
             if (vm.projectList.isNotEmpty()) {
-                Text("Your projects", style = FcType.Header, color = Fc.Title, modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 12.dp).testTag("home_your_projects_header"))
+                Text(stringResource(R.string.home_your_projects), style = FcType.Header, color = Fc.Title, modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 12.dp).testTag("home_your_projects_header"))
                 LazyRow(
                     Modifier.fillMaxWidth().testTag("home_projects_list"),
                     contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 16.dp),
@@ -105,7 +107,7 @@ fun HomeScreen(vm: AppViewModel) {
                 Spacer(Modifier.height(32.dp))
             }
             vm.engineProblem?.let {
-                Text("The editor couldn't start: $it", style = FcType.Body, color = Fc.Negative, modifier = Modifier.padding(16.dp))
+                Text(stringResource(R.string.home_engine_problem, it), style = FcType.Body, color = Fc.Negative, modifier = Modifier.padding(16.dp))
             }
             Spacer(Modifier.height(124.dp))
         }
@@ -120,7 +122,7 @@ fun HomeScreen(vm: AppViewModel) {
                 .background(Fc.Accent)
                 .clickable(role = Role.Button) { vm.newProject(NewProject.PhotoLibrary) }
                 .testTag("new_project")
-                .semantics { contentDescription = "New project" },
+                .semantics { contentDescription = newProjectDesc },
             contentAlignment = Alignment.Center,
         ) {
             GlyphIcon(LucideIcons.Plus.glyph(), Color.White, size = 26.dp)
@@ -131,8 +133,8 @@ fun HomeScreen(vm: AppViewModel) {
     }
     vm.renaming?.let { RenameDialog(vm, it) }
     vm.deleting?.let { p ->
-        FcDialog("“${p.name}”?", "Delete", { vm.delete(p) }, { vm.deleting = null }, destructive = true) {
-            Text("The project will be deleted from this phone.", style = FcType.Body, color = Fc.Body)
+        FcDialog(stringResource(R.string.home_delete_project_title, p.name), stringResource(R.string.home_delete), { vm.delete(p) }, { vm.deleting = null }, destructive = true) {
+            Text(stringResource(R.string.home_delete_project_body), style = FcType.Body, color = Fc.Body)
         }
     }
 }
@@ -146,10 +148,10 @@ private fun HomeTopBar(vm: AppViewModel) {
         }
         Spacer(Modifier.weight(1f))
         Box {
-            FcIconButton(LucideIcons.Ellipsis.glyph(), "More options", { menu = true }, size = 48.dp, modifier = Modifier.testTag("more_options"))
+            FcIconButton(LucideIcons.Ellipsis.glyph(), stringResource(R.string.home_more_options), { menu = true }, size = 48.dp, modifier = Modifier.testTag("more_options"))
             DropdownMenu(menu, { menu = false }, containerColor = Fc.Panel, shape = RoundedCornerShape(12.dp)) {
                 DropdownMenuItem(
-                    text = { Text("Settings", style = FcType.Label, color = Fc.Body) },
+                    text = { Text(stringResource(R.string.home_settings), style = FcType.Label, color = Fc.Body) },
                     leadingIcon = { GlyphIcon(LucideIcons.Settings.glyph(), Fc.Icon, size = 20.dp) },
                     onClick = { menu = false; vm.show(Screen.Settings) },
                 )
@@ -190,6 +192,7 @@ fun cardDuration(ticks: Long): String {
 
 @Composable
 private fun ProjectCard(vm: AppViewModel, p: ProjectEntry) {
+    val moreOptionsDesc = stringResource(R.string.home_more_options)
     var menu by remember { mutableStateOf(false) }
     val poster by produceState<ImageBitmap?>(null, p.id, p.opened) {
         value = withContext(Dispatchers.IO) { runCatching { BitmapFactory.decodeFile(p.poster.absolutePath)?.asImageBitmap() }.getOrNull() }
@@ -217,15 +220,15 @@ private fun ProjectCard(vm: AppViewModel, p: ProjectEntry) {
                         .clip(CircleShape)
                         .background(Fc.Layer1.copy(alpha = 0.7f))
                         .clickable(role = Role.Button) { menu = true }
-                        .semantics { contentDescription = "More options" },
+                        .semantics { contentDescription = moreOptionsDesc },
                     contentAlignment = Alignment.Center,
                 ) {
                     GlyphIcon(LucideIcons.Ellipsis.glyph(), Fc.Title, size = 18.dp)
                 }
                 DropdownMenu(menu, { menu = false }, containerColor = Fc.Panel, shape = RoundedCornerShape(12.dp)) {
-                    DropdownMenuItem(text = { Text("Rename", style = FcType.Label, color = Fc.Body) }, leadingIcon = { GlyphIcon(LucideIcons.Pencil.glyph(), Fc.Icon, size = 20.dp) }, onClick = { menu = false; vm.renaming = p })
-                    DropdownMenuItem(text = { Text("Duplicate", style = FcType.Label, color = Fc.Body) }, leadingIcon = { GlyphIcon(LucideIcons.CopyPlus.glyph(), Fc.Icon, size = 20.dp) }, onClick = { menu = false; vm.duplicate(p) })
-                    DropdownMenuItem(text = { Text("Delete", style = FcType.Label, color = Fc.Negative) }, leadingIcon = { GlyphIcon(LucideIcons.Trash2.glyph(), Fc.Negative, size = 20.dp) }, onClick = { menu = false; vm.deleting = p })
+                    DropdownMenuItem(text = { Text(stringResource(R.string.home_rename), style = FcType.Label, color = Fc.Body) }, leadingIcon = { GlyphIcon(LucideIcons.Pencil.glyph(), Fc.Icon, size = 20.dp) }, onClick = { menu = false; vm.renaming = p })
+                    DropdownMenuItem(text = { Text(stringResource(R.string.home_duplicate), style = FcType.Label, color = Fc.Body) }, leadingIcon = { GlyphIcon(LucideIcons.CopyPlus.glyph(), Fc.Icon, size = 20.dp) }, onClick = { menu = false; vm.duplicate(p) })
+                    DropdownMenuItem(text = { Text(stringResource(R.string.home_delete), style = FcType.Label, color = Fc.Negative) }, leadingIcon = { GlyphIcon(LucideIcons.Trash2.glyph(), Fc.Negative, size = 20.dp) }, onClick = { menu = false; vm.deleting = p })
                 }
             }
         }
@@ -238,8 +241,8 @@ private fun ProjectCard(vm: AppViewModel, p: ProjectEntry) {
 private fun RenameDialog(vm: AppViewModel, p: ProjectEntry) {
     var name by remember(p.id) { mutableStateOf(p.name) }
     val ok = name.trim().isNotEmpty() && name.trim() != p.name
-    FcDialog("Rename project", "Save", { if (ok) vm.rename(p, name) }, { vm.renaming = null }, confirmEnabled = ok) {
-        Text("Project name", style = FcType.Caption, color = Fc.Detail)
+    FcDialog(stringResource(R.string.home_rename_project), stringResource(R.string.home_save), { if (ok) vm.rename(p, name) }, { vm.renaming = null }, confirmEnabled = ok) {
+        Text(stringResource(R.string.home_project_name), style = FcType.Caption, color = Fc.Detail)
         Spacer(Modifier.height(8.dp))
         androidx.compose.foundation.text.BasicTextField(
             value = name,

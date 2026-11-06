@@ -40,6 +40,11 @@ class FilmcraftApplication : Application() {
     @Volatile
     private var engineLoaded = false
 
+    override fun onCreate() {
+        super.onCreate()
+        io.github.artcraftandroid.filmcraft.engine.ModelDownloads.appContext = this
+    }
+
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
         if (level >= ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN) {

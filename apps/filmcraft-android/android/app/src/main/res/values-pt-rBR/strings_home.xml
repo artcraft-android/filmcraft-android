@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_from_photo_library">Da sua biblioteca de fotos</string>
+    <string name="home_new_from_files">Novo a partir de arquivos</string>
+    <string name="home_new_blank_project">Novo projeto em branco</string>
+    <string name="home_extract_audio">Extrair áudio</string>
+    <string name="home_your_projects">Seus projetos</string>
+    <string name="home_engine_problem">Não foi possível iniciar o editor: %1$s</string>
+    <string name="home_new_project">Novo projeto</string>
+    <string name="home_more_options">Mais opções</string>
+    <string name="home_settings">Configurações</string>
+    <string name="home_rename">Renomear</string>
+    <string name="home_duplicate">Duplicar</string>
+    <string name="home_delete">Excluir</string>
+    <string name="home_delete_project_title">“%1$s”?</string>
+    <string name="home_delete_project_body">O projeto será excluído deste telefone.</string>
+    <string name="home_rename_project">Renomear projeto</string>
+    <string name="home_save">Salvar</string>
+    <string name="home_project_name">Nome do projeto</string>
+
+    <string name="home_close">Fechar</string>
+    <string name="home_pkg_whisper_tiny">Legendas: modelo de fala mais rápido</string>
+    <string name="home_pkg_whisper_base">Legendas: modelo de fala mais preciso</string>
+    <string name="home_pkg_voices">Vozes naturais</string>
+    <string name="home_about_filmcraft">Sobre o FilmCraft</string>
+    <string name="home_downloaded_section">Baixados para legendas e fala</string>
+    <string name="home_delete_package_title">Excluir %1$s?</string>
+    <string name="home_delete_package_body">Ele será baixado de novo na próxima vez que for necessário.</string>
+    <string name="home_filmcraft_android">FilmCraft para Android</string>
+    <string name="home_version">Versão %1$s (engine %2$s)</string>
+    <string name="home_about_blurb">Feito com o engine em Rust do FilmCraft. MIT OR Apache-2.0. O FilmCraft não é afiliado à Adobe; Premiere é uma marca registrada da Adobe Inc.</string>
+    <string name="home_source_code">Código-fonte</string>
+    <string name="home_open_source_licences">Licenças de código aberto</string>
+
+    <string name="home_cancel_export">Cancelar exportação</string>
+    <string name="home_exporting">Exportando…</string>
+    <string name="home_ready_to_share">Pronto para compartilhar</string>
+    <string name="home_export">Exportar</string>
+    <string name="home_export_settings">Configurações de exportação</string>
+    <string name="home_export_video">Exportar vídeo</string>
+    <string name="home_percent">%1$d%%</string>
+    <string name="home_keep_open">Mantenha o FilmCraft aberto até seu vídeo ficar pronto.</string>
+    <string name="home_saved_movies">Salvo na pasta Movies do seu telefone.</string>
+    <string name="home_share">Compartilhar</string>
+    <string name="home_try_again">Tentar novamente</string>
+    <string name="home_resolution">Resolução</string>
+    <string name="home_frame_rate">Taxa de quadros</string>
+    <string name="home_quality">Qualidade</string>
+    <string name="home_quality_low">Baixa</string>
+    <string name="home_quality_medium">Média</string>
+    <string name="home_quality_high">Alta</string>
+    <string name="home_estimated_size">Tamanho estimado do arquivo: %1$s</string>
+</resources>

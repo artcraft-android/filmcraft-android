@@ -40,6 +40,8 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import io.github.artcraftandroid.filmcraft.R
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
@@ -102,8 +104,8 @@ private val SPEEDS = doubleArrayOf(0.1, 1.0, 2.0, 5.0, 10.0)
 private fun SpeedPanel(ed: EditorController, c: ClipInfo, close: () -> Unit, modifier: Modifier) {
     var speed by remember(c.id, c.speed) { mutableDoubleStateOf(c.speed) }
     ToolPanel(
-        "Speed", close, modifier, tag = "speed_panel",
-        actions = { PanelAction(LucideIcons.Undo2.glyph(), "Reset speed", { speed = 1.0; ed.setSpeed(1.0, true) }) },
+        stringResource(R.string.panels_speed), close, modifier, tag = "speed_panel",
+        actions = { PanelAction(LucideIcons.Undo2.glyph(), stringResource(R.string.panels_reset_speed), { speed = 1.0; ed.setSpeed(1.0, true) }) },
     ) {
         Spacer(Modifier.height(4.dp))
         Text(TimelineMath.speedLabel(speed), style = FcType.Value, color = Fc.Secondary, textAlign = TextAlign.End, modifier = Modifier.fillMaxWidth().padding(horizontal = FcSize.PanelPadding))
@@ -125,14 +127,14 @@ private fun SpeedPanel(ed: EditorController, c: ClipInfo, close: () -> Unit, mod
             onDone = { ed.setSpeed(speed, true) },
             ticks = listOf(0.25f, 0.5f, 0.75f),
             snapTo = 0.25f,
-            description = "Speed",
+            description = stringResource(R.string.panels_speed),
             tag = "speed_slider",
             modifier = Modifier.padding(horizontal = FcSize.PanelPadding - 10.dp),
         )
         val sourceLen = (c.duration * c.speed).toLong()
         val newLen = if (speed > 0) (sourceLen / speed).toLong() else c.duration
         Text(
-            "Duration: " + TimelineMath.clock(newLen) + " " + TimelineMath.frameOfSecond(newLen, ed.rateNum, ed.rateDen),
+            stringResource(R.string.panels_duration_value, TimelineMath.clock(newLen), TimelineMath.frameOfSecond(newLen, ed.rateNum, ed.rateDen)),
             style = FcType.Caption.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.Normal),
             color = Fc.Detail,
             textAlign = TextAlign.Center,
@@ -146,11 +148,11 @@ private fun SpeedPanel(ed: EditorController, c: ClipInfo, close: () -> Unit, mod
 private fun VolumePanel(ed: EditorController, c: ClipInfo, close: () -> Unit, modifier: Modifier) {
     var v by remember(c.id) { mutableDoubleStateOf(c.volume) }
     ToolPanel(
-        "Volume", close, modifier, tag = "volume_panel",
+        stringResource(R.string.panels_volume), close, modifier, tag = "volume_panel",
         actions = {
             PanelAction(
                 (if (c.muted) LucideIcons.VolumeX else LucideIcons.Volume2).glyph(),
-                if (c.muted) "Unmute" else "Mute",
+                if (c.muted) stringResource(R.string.panels_unmute) else stringResource(R.string.panels_mute),
                 { ed.setMuted(!c.muted) },
             )
         },
@@ -163,7 +165,7 @@ private fun VolumePanel(ed: EditorController, c: ClipInfo, close: () -> Unit, mo
             onChange = { f -> v = Math.round(f * 200) / 100.0; ed.setVolume(v) },
             enabled = !c.muted,
             snapTo = 0.5f,
-            description = "Volume",
+            description = stringResource(R.string.panels_volume),
             tag = "volume_slider",
             modifier = Modifier.padding(horizontal = FcSize.PanelPadding - 10.dp),
         )
@@ -177,24 +179,24 @@ private fun FadePanel(ed: EditorController, c: ClipInfo, close: () -> Unit, modi
     var fadeIn by remember(c.id) { mutableStateOf(c.fadeIn) }
     var fadeOut by remember(c.id) { mutableStateOf(c.fadeOut) }
     val tenth = TPS / 10
-    ToolPanel("Fade", close, modifier, tag = "fade_panel") {
+    ToolPanel(stringResource(R.string.panels_fade), close, modifier, tag = "fade_panel") {
         Spacer(Modifier.height(5.dp))
-        SliderRow("Fade in", TimelineMath.seconds1(fadeIn)) {
+        SliderRow(stringResource(R.string.panels_fade_in), TimelineMath.seconds1(fadeIn)) {
             FcSlider(
                 fraction = fadeIn.toFloat() / max,
                 onChange = { f -> fadeIn = (f * max / tenth).toLong() * tenth },
                 onDone = { ed.setFades(fadeIn, fadeOut) },
-                description = "Fade in",
+                description = stringResource(R.string.panels_fade_in),
                 tag = "fade_in_slider",
             )
         }
         Spacer(Modifier.height(40.dp))
-        SliderRow("Fade out", TimelineMath.seconds1(fadeOut)) {
+        SliderRow(stringResource(R.string.panels_fade_out), TimelineMath.seconds1(fadeOut)) {
             FcSlider(
                 fraction = fadeOut.toFloat() / max,
                 onChange = { f -> fadeOut = (f * max / tenth).toLong() * tenth },
                 onDone = { ed.setFades(fadeIn, fadeOut) },
-                description = "Fade out",
+                description = stringResource(R.string.panels_fade_out),
                 tag = "fade_out_slider",
             )
         }
@@ -206,10 +208,10 @@ private fun FadePanel(ed: EditorController, c: ClipInfo, close: () -> Unit, modi
 private fun OpacityPanel(ed: EditorController, c: ClipInfo, close: () -> Unit, modifier: Modifier) {
     var v by remember(c.id) { mutableDoubleStateOf(c.opacity) }
     ToolPanel(
-        "Opacity", close, modifier, tag = "opacity_panel",
+        stringResource(R.string.panels_opacity), close, modifier, tag = "opacity_panel",
         actions = {
-            PanelAction(LucideIcons.CopyCheck.glyph(), "Apply to all", { ed.setOpacity(v, all = true) }, tag = "opacity_apply_to_all")
-            PanelAction(LucideIcons.Undo2.glyph(), "Revert", { v = 1.0; ed.setOpacity(1.0) })
+            PanelAction(LucideIcons.CopyCheck.glyph(), stringResource(R.string.panels_apply_to_all), { ed.setOpacity(v, all = true) }, tag = "opacity_apply_to_all")
+            PanelAction(LucideIcons.Undo2.glyph(), stringResource(R.string.panels_revert), { v = 1.0; ed.setOpacity(1.0) })
         },
     ) {
         Row(Modifier.fillMaxWidth().padding(start = FcSize.PanelPadding - 10.dp, end = FcSize.PanelPadding, bottom = 24.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -217,7 +219,7 @@ private fun OpacityPanel(ed: EditorController, c: ClipInfo, close: () -> Unit, m
                 fraction = v.toFloat(),
                 onChange = { f -> v = Math.round(f * 100) / 100.0; ed.setOpacity(v) },
                 look = SliderLook.Opacity,
-                description = "Opacity",
+                description = stringResource(R.string.panels_opacity),
                 tag = "opacity_slider",
                 modifier = Modifier.weight(1f),
             )
@@ -257,12 +259,12 @@ private fun LookPanel(ed: EditorController, c: ClipInfo, filters: Boolean, close
     val time = ed.playhead.coerceIn(c.start, c.start + c.duration - ed.frameTicks)
     fun apply(id: String, a: Double, merge: Boolean) = if (filters) ed.setFilter(id, a, merge) else ed.setEffect(id, a, merge)
     ToolPanel(
-        if (filters) "Filters" else "Effects", close, modifier, tag = if (filters) "filters_panel" else "effects_panel",
+        if (filters) stringResource(R.string.panels_filters) else stringResource(R.string.panels_effects), close, modifier, tag = if (filters) "filters_panel" else "effects_panel",
         actions = {
-            PanelAction(LucideIcons.CopyCheck.glyph(), "Apply to all", {
+            PanelAction(LucideIcons.CopyCheck.glyph(), stringResource(R.string.panels_apply_to_all), {
                 if (filters) ed.setFilter(current, amount, false, all = true) else ed.setEffect(current, amount, false, all = true)
             }, tag = if (filters) "filters_apply_to_all_button" else "effects_apply_to_all_button")
-            PanelAction(LucideIcons.Undo2.glyph(), "Revert", { apply("", 0.0, false) }, tag = if (filters) "filters_revert_button" else "effects_revert_button")
+            PanelAction(LucideIcons.Undo2.glyph(), stringResource(R.string.panels_revert), { apply("", 0.0, false) }, tag = if (filters) "filters_revert_button" else "effects_revert_button")
         },
     ) {
         LazyVerticalGrid(
@@ -272,7 +274,7 @@ private fun LookPanel(ed: EditorController, c: ClipInfo, filters: Boolean, close
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             item {
-                PresetTile("None", current.isEmpty(), { apply("", 0.0, false) }, tag = if (filters) "filter_item_none" else "effect_item_none") {
+                PresetTile(stringResource(R.string.panels_none), current.isEmpty(), { apply("", 0.0, false) }, tag = if (filters) "filter_item_none" else "effect_item_none") {
                     GlyphIcon(LucideIcons.Ban.glyph(), Fc.Body, size = 32.dp)
                 }
             }
@@ -296,12 +298,12 @@ private fun LookPanel(ed: EditorController, c: ClipInfo, filters: Boolean, close
             HorizontalDivider(color = Fc.Divider, thickness = 1.dp)
             Spacer(Modifier.height(12.dp))
             val max = if (filters) 200.0 else 100.0
-            SliderRow("Intensity", "${Math.round(amount)}") {
+            SliderRow(stringResource(R.string.panels_intensity), "${Math.round(amount)}") {
                 FcSlider(
                     fraction = (amount / max).toFloat(),
                     onChange = { f -> amount = Math.round(f * max).toDouble(); apply(current, amount, true) },
                     snapTo = if (filters) 0.5f else null,
-                    description = "Intensity",
+                    description = stringResource(R.string.panels_intensity),
                     tag = if (filters) "filters_intensity_slider" else "effects_intensity_slider",
                 )
             }
@@ -349,9 +351,9 @@ private fun TransitionPanel(ed: EditorController, panel: Panel.Transitions, clos
     val t = ed.timeline
     val current = t?.transitions?.firstOrNull { it.from == panel.from && it.to == panel.to }
     val title = when {
-        panel.from == null -> "Intro transition"
-        panel.to == null -> "Outro transition"
-        else -> "Transitions"
+        panel.from == null -> stringResource(R.string.panels_intro_transition)
+        panel.to == null -> stringResource(R.string.panels_outro_transition)
+        else -> stringResource(R.string.panels_transitions)
     }
     var seconds by remember(current?.id) { mutableDoubleStateOf(current?.let { it.duration.toDouble() / TPS } ?: 0.4) }
     val max by produceState(5.0, panel, t?.revision) { value = ed.maxTransition(panel.from, panel.to).coerceAtLeast(0.1) }
@@ -360,9 +362,9 @@ private fun TransitionPanel(ed: EditorController, panel: Panel.Transitions, clos
         title, close, modifier, tag = "transitions_panel_root",
         actions = {
             if (panel.from != null && panel.to != null) {
-                PanelAction(LucideIcons.CopyCheck.glyph(), "Apply to all", { ed.setTransition(panel.from, panel.to, current?.preset.orEmpty(), seconds, all = true) })
+                PanelAction(LucideIcons.CopyCheck.glyph(), stringResource(R.string.panels_apply_to_all), { ed.setTransition(panel.from, panel.to, current?.preset.orEmpty(), seconds, all = true) })
             }
-            PanelAction(LucideIcons.Undo2.glyph(), "Revert", { ed.setTransition(panel.from, panel.to, "", 0.0) }, enabled = current != null, tag = "transitions_revert_button")
+            PanelAction(LucideIcons.Undo2.glyph(), stringResource(R.string.panels_revert), { ed.setTransition(panel.from, panel.to, "", 0.0) }, enabled = current != null, tag = "transitions_revert_button")
         },
     ) {
         LazyVerticalGrid(
@@ -372,7 +374,7 @@ private fun TransitionPanel(ed: EditorController, panel: Panel.Transitions, clos
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             item {
-                PresetTile("None", current == null, { ed.setTransition(panel.from, panel.to, "", 0.0) }, tag = "transition_item_none") {
+                PresetTile(stringResource(R.string.panels_none), current == null, { ed.setTransition(panel.from, panel.to, "", 0.0) }, tag = "transition_item_none") {
                     GlyphIcon(LucideIcons.Ban.glyph(), Fc.Body, size = 32.dp)
                 }
             }
@@ -387,12 +389,12 @@ private fun TransitionPanel(ed: EditorController, panel: Panel.Transitions, clos
         if (current != null) {
             HorizontalDivider(color = Fc.Divider, thickness = 1.dp)
             Spacer(Modifier.height(12.dp))
-            SliderRow("Duration", "%.1fs".format(seconds)) {
+            SliderRow(stringResource(R.string.panels_duration), "%.1fs".format(seconds)) {
                 FcSlider(
                     fraction = ((seconds - 0.1) / (max - 0.1).coerceAtLeast(0.01)).toFloat(),
                     onChange = { f -> seconds = Math.round((0.1 + f * (max - 0.1)) * 10) / 10.0 },
                     onDone = { ed.setTransitionDuration(current.id, seconds) },
-                    description = "Duration",
+                    description = stringResource(R.string.panels_duration),
                     tag = "transitions_duration_slider",
                 )
             }
@@ -408,7 +410,7 @@ private val ASPECTS = listOf(16 to 9, 9 to 16, 4 to 3, 3 to 4, 1 to 1, 4 to 5, 3
 private fun AspectPanel(ed: EditorController, close: () -> Unit, modifier: Modifier) {
     val t = ed.timeline ?: return
     val now = t.width.toDouble() / t.height.toDouble().coerceAtLeast(1.0)
-    ToolPanel("Aspect ratio", close, modifier, tag = "aspect_ratio_panel") {
+    ToolPanel(stringResource(R.string.panels_aspect_ratio), close, modifier, tag = "aspect_ratio_panel") {
         Row(
             Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = 20.dp).padding(bottom = 2.dp, top = 1.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),

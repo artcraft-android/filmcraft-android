@@ -35,12 +35,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.artcraftandroid.filmcraft.R
 import io.github.artcraftandroid.filmcraft.ui.Fc
 import io.github.artcraftandroid.filmcraft.ui.FcSize
 import io.github.artcraftandroid.filmcraft.ui.FcType
@@ -131,6 +134,7 @@ class VoiceRecorder(val file: File) {
 /** Audio ▸ Voiceover: record from the microphone at the playhead. */
 @Composable
 fun VoiceoverPanel(ed: EditorController, close: () -> Unit, modifier: Modifier = Modifier) {
+    val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
     var countdown by remember { mutableStateOf(true) }
     var counting by remember { mutableIntStateOf(0) }
@@ -159,7 +163,7 @@ fun VoiceoverPanel(ed: EditorController, close: () -> Unit, modifier: Modifier =
                 }
                 val r = ed.newVoiceRecorder() ?: return@launch
                 if (!r.start()) {
-                    ed.tellUser("The microphone can't be used right now.")
+                    ed.tellUser(ctx.getString(R.string.speech_mic_error))
                     return@launch
                 }
                 recorder = r
@@ -172,9 +176,9 @@ fun VoiceoverPanel(ed: EditorController, close: () -> Unit, modifier: Modifier =
         }
     }
     ToolPanel(
-        "Voiceover", { if (recorder == null) close() }, modifier, tag = "voiceover_panel",
+        stringResource(R.string.speech_voiceover_title), { if (recorder == null) close() }, modifier, tag = "voiceover_panel",
         actions = {
-            PanelAction(LucideIcons.Trash2.glyph(), "Discard recording", {
+            PanelAction(LucideIcons.Trash2.glyph(), stringResource(R.string.speech_discard_recording), {
                 val ids = takes.toList()
                 takes.clear()
                 ed.discardTakes(ids)
@@ -202,7 +206,7 @@ fun VoiceoverPanel(ed: EditorController, close: () -> Unit, modifier: Modifier =
                         onCheckedChange = { countdown = it },
                         enabled = recorder == null && counting == 0,
                         colors = SwitchDefaults.colors(checkedTrackColor = Fc.Accent, checkedThumbColor = Color.White, uncheckedTrackColor = Fc.Chip, uncheckedThumbColor = Fc.Detail),
-                        modifier = Modifier.semantics { contentDescription = "Countdown" },
+                        modifier = Modifier.semantics { contentDescription = ctx.getString(R.string.speech_countdown_desc) },
                     )
                 }
                 val recording = recorder != null
@@ -219,7 +223,7 @@ fun VoiceoverPanel(ed: EditorController, close: () -> Unit, modifier: Modifier =
                             }
                         }
                         .testTag("voiceover_record")
-                        .semantics { contentDescription = if (recording) "Stop recording" else if (counting > 0) "Cancel countdown" else "Record" },
+                        .semantics { contentDescription = if (recording) ctx.getString(R.string.speech_stop_recording) else if (counting > 0) ctx.getString(R.string.speech_cancel_countdown) else ctx.getString(R.string.speech_record) },
                     contentAlignment = Alignment.Center,
                 ) {
                     GlyphIcon(if (recording) Glyphs.Stop else Glyphs.Record, if (recording) Color.White else Fc.Recording, size = 40.dp)

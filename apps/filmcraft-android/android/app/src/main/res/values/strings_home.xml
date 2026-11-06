@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_from_photo_library">From your photo library</string>
+    <string name="home_new_from_files">New from files</string>
+    <string name="home_new_blank_project">New blank project</string>
+    <string name="home_extract_audio">Extract audio</string>
+    <string name="home_your_projects">Your projects</string>
+    <string name="home_engine_problem">The editor couldn\'t start: %1$s</string>
+    <string name="home_new_project">New project</string>
+    <string name="home_more_options">More options</string>
+    <string name="home_settings">Settings</string>
+    <string name="home_rename">Rename</string>
+    <string name="home_duplicate">Duplicate</string>
+    <string name="home_delete">Delete</string>
+    <string name="home_delete_project_title">“%1$s”?</string>
+    <string name="home_delete_project_body">The project will be deleted from this phone.</string>
+    <string name="home_rename_project">Rename project</string>
+    <string name="home_save">Save</string>
+    <string name="home_project_name">Project name</string>
+
+    <string name="home_close">Close</string>
+    <string name="home_pkg_whisper_tiny">Captions: faster speech model</string>
+    <string name="home_pkg_whisper_base">Captions: more accurate speech model</string>
+    <string name="home_pkg_voices">Natural voices</string>
+    <string name="home_about_filmcraft">About FilmCraft</string>
+    <string name="home_downloaded_section">Downloaded for captions and speech</string>
+    <string name="home_delete_package_title">Delete %1$s?</string>
+    <string name="home_delete_package_body">It\'s downloaded again the next time it\'s needed.</string>
+    <string name="home_filmcraft_android">FilmCraft for Android</string>
+    <string name="home_version">Version %1$s (engine %2$s)</string>
+    <string name="home_about_blurb">Built on FilmCraft\'s Rust engine. MIT OR Apache-2.0. FilmCraft is not affiliated with Adobe; Premiere is a trademark of Adobe Inc.</string>
+    <string name="home_source_code">Source code</string>
+    <string name="home_open_source_licences">Open-source licences</string>
+
+    <string name="home_cancel_export">Cancel export</string>
+    <string name="home_exporting">Exporting…</string>
+    <string name="home_ready_to_share">Ready to share</string>
+    <string name="home_export">Export</string>
+    <string name="home_export_settings">Export settings</string>
+    <string name="home_export_video">Export video</string>
+    <string name="home_percent">%1$d%%</string>
+    <string name="home_keep_open">Keep FilmCraft open until your video is ready.</string>
+    <string name="home_saved_movies">Saved to your phone\'s Movies folder.</string>
+    <string name="home_share">Share</string>
+    <string name="home_try_again">Try again</string>
+    <string name="home_resolution">Resolution</string>
+    <string name="home_frame_rate">Frame rate</string>
+    <string name="home_quality">Quality</string>
+    <string name="home_quality_low">Low</string>
+    <string name="home_quality_medium">Medium</string>
+    <string name="home_quality_high">High</string>
+    <string name="home_estimated_size">Estimated file size: %1$s</string>
+</resources>
