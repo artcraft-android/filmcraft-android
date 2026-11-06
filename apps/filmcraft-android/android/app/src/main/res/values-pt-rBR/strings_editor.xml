@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="editor_back">Voltar</string>
+    <string name="editor_tool_audio">Áudio</string>
+    <string name="editor_tool_text">Texto</string>
+    <string name="editor_tool_captions">Legendas</string>
+    <string name="editor_tool_files">Arquivos</string>
+    <string name="editor_tool_blank">Em branco</string>
+    <string name="editor_tool_aspect_ratio">Proporção</string>
+    <string name="editor_tool_voiceover">Locução</string>
+    <string name="editor_tool_text_to_speech">Texto para fala</string>
+    <string name="editor_tool_extract_audio">Extrair áudio</string>
+    <string name="editor_tool_files_visual">Imagens e vídeos</string>
+    <string name="editor_tool_split">Dividir</string>
+    <string name="editor_tool_delete">Excluir</string>
+    <string name="editor_tool_duplicate">Duplicar</string>
+    <string name="editor_tool_replace">Substituir</string>
+    <string name="editor_tool_filters">Filtros</string>
+    <string name="editor_tool_effects">Efeitos</string>
+    <string name="editor_tool_opacity">Opacidade</string>
+    <string name="editor_tool_mirror">Espelhar</string>
+    <string name="editor_tool_flip">Inverter</string>
+    <string name="editor_tool_edit_text">Editar texto</string>
+    <string name="editor_tool_style">Estilo</string>
+    <string name="editor_tool_edit_speech">Editar fala</string>
+    <string name="editor_tool_volume">Volume</string>
+    <string name="editor_tool_fade">Fade</string>
+    <string name="editor_tool_retime">Remapear tempo</string>
+    <string name="editor_tool_speed">Velocidade</string>
+    <string name="editor_tool_freeze">Congelar</string>
+    <string name="editor_previous_frame">Quadro anterior</string>
+    <string name="editor_pause">Pausar</string>
+    <string name="editor_play">Reproduzir</string>
+    <string name="editor_next_frame">Próximo quadro</string>
+    <string name="editor_resize_monitor">Redimensionar monitor</string>
+    <string name="editor_resize_player">Redimensionar player</string>
+    <string name="editor_home">Início</string>
+    <string name="editor_undo">Desfazer</string>
+    <string name="editor_redo">Refazer</string>
+    <string name="editor_export">Exportar</string>
+    <string name="editor_preview">Pré-visualização</string>
+    <string name="editor_timeline">Linha do tempo</string>
+    <string name="editor_add_media">Adicionar mídia</string>
+    <string name="editor_missing_media">Mídia ausente</string>
+</resources>

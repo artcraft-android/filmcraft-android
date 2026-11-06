@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="core_untitled_project">Sem título</string>
+    <string name="core_file_could_not_read">Não foi possível ler o arquivo.</string>
+    <string name="core_project_copy">%1$s (cópia)</string>
+    <string name="core_editor_still_starting">O editor ainda está iniciando.</string>
+    <string name="core_editor_could_not_start">Não foi possível iniciar o editor.</string>
+    <string name="core_not_enough_space">Não há espaço suficiente no telefone para este vídeo. Libere espaço ou reduza a resolução ou a qualidade.</string>
+    <string name="core_export_failed">A exportação falhou.</string>
+    <string name="core_video_could_not_save">Não foi possível salvar o vídeo no telefone.</string>
+    <string name="core_something_went_wrong">Algo deu errado.</string>
+    <string name="core_download_failed">O download falhou.</string>
+    <string name="core_models_folder_unusable">A pasta do app para modelos não pode ser usada.</string>
+    <string name="core_download_failed_http">O download falhou (HTTP %1$d). Tente novamente mais tarde.</string>
+    <string name="core_file_too_big">%1$s é maior do que o esperado.</string>
+    <string name="core_file_bad_download">%1$s não foi baixado corretamente. Tente novamente.</string>
+    <string name="core_file_save_failed">Não foi possível salvar %1$s.</string>
+    <string name="core_adding_media">Adicionando mídia…</string>
+    <string name="core_file_cannot_add">Não foi possível adicionar esse arquivo.</string>
+    <string name="core_some_files_cannot_add">Não foi possível adicionar alguns arquivos.</string>
+    <string name="core_replacing">Substituindo…</string>
+    <string name="core_making_speech">Gerando fala…</string>
+    <string name="core_getting_ready">Preparando…</string>
+    <string name="core_no_speech_heard">Nenhuma fala foi ouvida, então não há legendas.</string>
+    <string name="core_export_needs_frames">Adicione pelo menos alguns quadros à linha do tempo para exportar.</string>
+</resources>

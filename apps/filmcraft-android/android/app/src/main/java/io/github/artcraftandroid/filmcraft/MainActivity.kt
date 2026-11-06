@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
     private val mic = registerForActivityResult(ActivityResultContracts.RequestPermission()) { ok ->
         val run = micGranted
         micGranted = null
-        if (ok) run?.invoke() else vm.tell("FilmCraft needs the microphone to record a voice-over. You can allow it in Settings.")
+        if (ok) run?.invoke() else vm.tell(getString(R.string.misc_mic_permission_needed))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,9 +72,9 @@ class MainActivity : ComponentActivity() {
         try {
             block()
         } catch (_: ActivityNotFoundException) {
-            vm.tell("No app on this phone can do that.")
+            vm.tell(getString(R.string.misc_no_app_for_action))
         } catch (_: SecurityException) {
-            vm.tell("FilmCraft isn't allowed to do that.")
+            vm.tell(getString(R.string.misc_not_allowed))
         }
     }
 

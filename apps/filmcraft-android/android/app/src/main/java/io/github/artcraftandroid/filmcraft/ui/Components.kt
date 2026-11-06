@@ -60,6 +60,8 @@ import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.res.stringResource
+import io.github.artcraftandroid.filmcraft.R
 import androidx.compose.ui.semantics.setProgress
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -170,6 +172,7 @@ fun ToolPanel(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val close by rememberUpdatedState(onClose)
+    val closePanel = stringResource(R.string.misc_close_panel)
     var drag by remember { mutableFloatStateOf(0f) }
     Column(
         modifier
@@ -193,7 +196,7 @@ fun ToolPanel(
                 Modifier
                     .fillMaxWidth()
                     .height(28.dp)
-                    .semantics { contentDescription = "Close panel" }
+                    .semantics { contentDescription = closePanel }
                     .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = { close() }),
                 contentAlignment = Alignment.TopCenter,
             ) {
@@ -380,7 +383,7 @@ fun FcDialog(
     confirm: String,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
-    dismiss: String = "Cancel",
+    dismiss: String = stringResource(R.string.misc_cancel),
     destructive: Boolean = false,
     confirmEnabled: Boolean = true,
     content: @Composable ColumnScope.() -> Unit = {},

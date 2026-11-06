@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="misc_mic_permission_needed">O FilmCraft precisa do microfone para gravar uma narração. Você pode permitir nas Configurações.</string>
+    <string name="misc_no_app_for_action">Nenhum app neste celular pode fazer isso.</string>
+    <string name="misc_not_allowed">O FilmCraft não tem permissão para fazer isso.</string>
+    <string name="misc_close_panel">Fechar painel</string>
+    <string name="misc_cancel">Cancelar</string>
+</resources>

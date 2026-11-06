@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="panels_speed">Velocidade</string>
+    <string name="panels_reset_speed">Redefinir velocidade</string>
+    <string name="panels_duration_value">Duração: %1$s %2$s</string>
+    <string name="panels_volume">Volume</string>
+    <string name="panels_unmute">Ativar som</string>
+    <string name="panels_mute">Silenciar</string>
+    <string name="panels_fade">Fade</string>
+    <string name="panels_fade_in">Fade de entrada</string>
+    <string name="panels_fade_out">Fade de saída</string>
+    <string name="panels_opacity">Opacidade</string>
+    <string name="panels_apply_to_all">Aplicar a todos</string>
+    <string name="panels_revert">Reverter</string>
+    <string name="panels_filters">Filtros</string>
+    <string name="panels_effects">Efeitos</string>
+    <string name="panels_none">Nenhum</string>
+    <string name="panels_intensity">Intensidade</string>
+    <string name="panels_intro_transition">Transição de entrada</string>
+    <string name="panels_outro_transition">Transição de saída</string>
+    <string name="panels_transitions">Transições</string>
+    <string name="panels_duration">Duração</string>
+    <string name="panels_aspect_ratio">Proporção</string>
+    <string name="panels_done">Concluir</string>
+    <string name="panels_tab_presets">Predefinições</string>
+    <string name="panels_tab_font">Fonte</string>
+    <string name="panels_tab_color">Cor</string>
+    <string name="panels_tab_layout">Layout</string>
+    <string name="panels_style">Estilo</string>
+    <string name="panels_title_fallback">Título</string>
+    <string name="panels_search_fonts">Buscar fontes</string>
+    <string name="panels_text">Texto</string>
+    <string name="panels_background">Fundo</string>
+    <string name="panels_save_color">Salvar cor</string>
+    <string name="panels_copy_hex">Copiar cor hexadecimal</string>
+    <string name="panels_paste_hex">Colar cor hexadecimal</string>
+    <string name="panels_hex">Hex</string>
+    <string name="panels_colors">Cores</string>
+    <string name="panels_use">Usar</string>
+    <string name="panels_hue">Matiz</string>
+    <string name="panels_text_alignment">Alinhamento do texto</string>
+    <string name="panels_align_left">Alinhar texto à esquerda</string>
+    <string name="panels_align_center">Centralizar texto</string>
+    <string name="panels_align_right">Alinhar texto à direita</string>
+    <string name="panels_text_width">Largura do texto</string>
+</resources>

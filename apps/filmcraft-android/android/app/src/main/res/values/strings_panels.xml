@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="panels_speed">Speed</string>
+    <string name="panels_reset_speed">Reset speed</string>
+    <string name="panels_duration_value">Duration: %1$s %2$s</string>
+    <string name="panels_volume">Volume</string>
+    <string name="panels_unmute">Unmute</string>
+    <string name="panels_mute">Mute</string>
+    <string name="panels_fade">Fade</string>
+    <string name="panels_fade_in">Fade in</string>
+    <string name="panels_fade_out">Fade out</string>
+    <string name="panels_opacity">Opacity</string>
+    <string name="panels_apply_to_all">Apply to all</string>
+    <string name="panels_revert">Revert</string>
+    <string name="panels_filters">Filters</string>
+    <string name="panels_effects">Effects</string>
+    <string name="panels_none">None</string>
+    <string name="panels_intensity">Intensity</string>
+    <string name="panels_intro_transition">Intro transition</string>
+    <string name="panels_outro_transition">Outro transition</string>
+    <string name="panels_transitions">Transitions</string>
+    <string name="panels_duration">Duration</string>
+    <string name="panels_aspect_ratio">Aspect ratio</string>
+    <string name="panels_done">Done</string>
+    <string name="panels_tab_presets">Presets</string>
+    <string name="panels_tab_font">Font</string>
+    <string name="panels_tab_color">Color</string>
+    <string name="panels_tab_layout">Layout</string>
+    <string name="panels_style">Style</string>
+    <string name="panels_title_fallback">Title</string>
+    <string name="panels_search_fonts">Search fonts</string>
+    <string name="panels_text">Text</string>
+    <string name="panels_background">Background</string>
+    <string name="panels_save_color">Save color</string>
+    <string name="panels_copy_hex">Copy hex color</string>
+    <string name="panels_paste_hex">Paste hex color</string>
+    <string name="panels_hex">Hex</string>
+    <string name="panels_colors">Colors</string>
+    <string name="panels_use">Use</string>
+    <string name="panels_hue">Hue</string>
+    <string name="panels_text_alignment">Text alignment</string>
+    <string name="panels_align_left">Align text left</string>
+    <string name="panels_align_center">Align text center</string>
+    <string name="panels_align_right">Align text right</string>
+    <string name="panels_text_width">Text width</string>
+</resources>

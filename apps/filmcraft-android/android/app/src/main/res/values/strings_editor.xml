@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="editor_back">Back</string>
+    <string name="editor_tool_audio">Audio</string>
+    <string name="editor_tool_text">Text</string>
+    <string name="editor_tool_captions">Captions</string>
+    <string name="editor_tool_files">Files</string>
+    <string name="editor_tool_blank">Blank</string>
+    <string name="editor_tool_aspect_ratio">Aspect ratio</string>
+    <string name="editor_tool_voiceover">Voiceover</string>
+    <string name="editor_tool_text_to_speech">Text to speech</string>
+    <string name="editor_tool_extract_audio">Extract audio</string>
+    <string name="editor_tool_files_visual">Images and videos</string>
+    <string name="editor_tool_split">Split</string>
+    <string name="editor_tool_delete">Delete</string>
+    <string name="editor_tool_duplicate">Duplicate</string>
+    <string name="editor_tool_replace">Replace</string>
+    <string name="editor_tool_filters">Filters</string>
+    <string name="editor_tool_effects">Effects</string>
+    <string name="editor_tool_opacity">Opacity</string>
+    <string name="editor_tool_mirror">Mirror</string>
+    <string name="editor_tool_flip">Flip</string>
+    <string name="editor_tool_edit_text">Edit text</string>
+    <string name="editor_tool_style">Style</string>
+    <string name="editor_tool_edit_speech">Edit speech</string>
+    <string name="editor_tool_volume">Volume</string>
+    <string name="editor_tool_fade">Fade</string>
+    <string name="editor_tool_retime">Retime</string>
+    <string name="editor_tool_speed">Speed</string>
+    <string name="editor_tool_freeze">Freeze</string>
+    <string name="editor_previous_frame">Previous frame</string>
+    <string name="editor_pause">Pause</string>
+    <string name="editor_play">Play</string>
+    <string name="editor_next_frame">Next frame</string>
+    <string name="editor_resize_monitor">Resize monitor</string>
+    <string name="editor_resize_player">Resize player</string>
+    <string name="editor_home">Home</string>
+    <string name="editor_undo">Undo</string>
+    <string name="editor_redo">Redo</string>
+    <string name="editor_export">Export</string>
+    <string name="editor_preview">Preview</string>
+    <string name="editor_timeline">Timeline</string>
+    <string name="editor_add_media">Add media</string>
+    <string name="editor_missing_media">Missing media</string>
+</resources>

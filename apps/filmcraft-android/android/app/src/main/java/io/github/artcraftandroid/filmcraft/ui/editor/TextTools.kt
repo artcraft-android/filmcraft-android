@@ -59,6 +59,8 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import io.github.artcraftandroid.filmcraft.R
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
@@ -147,7 +149,7 @@ fun TextInputStrip(ed: EditorController, panel: Panel.TextInput, modifier: Modif
                 .size(48.dp)
                 .clip(CircleShape)
                 .clickable(role = Role.Button) { done() }
-                .semantics { contentDescription = "Done" },
+                .semantics { contentDescription = stringResource(R.string.panels_done) },
             contentAlignment = Alignment.Center,
         ) {
             Box(Modifier.size(32.dp).clip(CircleShape).background(Fc.Accent), contentAlignment = Alignment.Center) {
@@ -158,7 +160,7 @@ fun TextInputStrip(ed: EditorController, panel: Panel.TextInput, modifier: Modif
     LaunchedEffect(panel) { runCatching { focus.requestFocus() } }
 }
 
-private enum class StyleTab(val label: String) { Presets("Presets"), Font("Font"), Color("Color"), Layout("Layout") }
+private enum class StyleTab(val labelRes: Int) { Presets(R.string.panels_tab_presets), Font(R.string.panels_tab_font), Color(R.string.panels_tab_color), Layout(R.string.panels_tab_layout) }
 
 /** Text ▸ Style: presets, fonts, colours, alignment and width. */
 @Composable
@@ -173,8 +175,8 @@ fun TextStylePanel(ed: EditorController, c: ClipInfo, close: () -> Unit, modifie
         ed.setTextStyle(c.id, s, merge)
     }
     ToolPanel(
-        "Style", close, modifier, tag = "text_style_panel",
-        actions = { PanelAction(LucideIcons.CopyCheck.glyph(), "Apply to all", { ed.setTextStyle(c.id, st, false, all = true) }, tag = "text_style_action_apply_to_all") },
+        stringResource(R.string.panels_style), close, modifier, tag = "text_style_panel",
+        actions = { PanelAction(LucideIcons.CopyCheck.glyph(), stringResource(R.string.panels_apply_to_all), { ed.setTextStyle(c.id, st, false, all = true) }, tag = "text_style_action_apply_to_all") },
     ) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp)) {
             for (t in StyleTab.entries) {
@@ -186,7 +188,7 @@ fun TextStylePanel(ed: EditorController, c: ClipInfo, close: () -> Unit, modifie
                         .semantics { selected = tab == t },
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    Text(t.label, style = FcType.Label, color = if (tab == t) Fc.Title else Fc.Detail, modifier = Modifier.padding(top = 6.dp, bottom = 10.dp))
+                    Text(stringResource(t.labelRes), style = FcType.Label, color = if (tab == t) Fc.Title else Fc.Detail, modifier = Modifier.padding(top = 6.dp, bottom = 10.dp))
                     Box(Modifier.width(48.dp).height(3.dp).clip(CircleShape).background(if (tab == t) Fc.Title else Color.Transparent))
                 }
             }
@@ -235,7 +237,7 @@ private fun PresetsTab(ed: EditorController, c: ClipInfo, st: TextStyle, apply: 
                 } else {
                     val bg = s.background?.let { Color(it.toInt()) }
                     Text(
-                        c.text.lines().firstOrNull().orEmpty().ifBlank { "Title" },
+                        c.text.lines().firstOrNull().orEmpty().ifBlank { stringResource(R.string.panels_title_fallback) },
                         style = UiTextStyle(fontFamily = familyFor(s.font), fontSize = 20.sp, fontWeight = weightFor(s.fontStyle), color = Color(s.color.toInt())),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -281,7 +283,7 @@ private fun FontTab(ed: EditorController, st: TextStyle, apply: (TextStyle) -> U
             GlyphIcon(LucideIcons.Search.glyph(), Fc.Detail, size = 20.dp)
             Spacer(Modifier.width(8.dp))
             Box(Modifier.weight(1f)) {
-                if (query.isEmpty()) Text("Search fonts", style = FcType.Label, color = Fc.Detail)
+                if (query.isEmpty()) Text(stringResource(R.string.panels_search_fonts), style = FcType.Label, color = Fc.Detail)
                 BasicTextField(query, { query = it }, singleLine = true, textStyle = UiTextStyle(fontFamily = Inter, fontSize = 16.sp, color = Fc.Title), cursorBrush = SolidColor(Fc.Title), modifier = Modifier.fillMaxWidth())
             }
         }
@@ -329,8 +331,8 @@ private fun ColorTab(st: TextStyle, apply: (TextStyle, Boolean) -> Unit) {
     val clipboard = LocalClipboardManager.current
     Column(Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            SelectChip("Text", !background, { background = false }, tag = "text_style_color_target_chip_text")
-            SelectChip("Background", background, { background = true }, tag = "text_style_color_target_chip_background")
+            SelectChip(stringResource(R.string.panels_text), !background, { background = false }, tag = "text_style_color_target_chip_text")
+            SelectChip(stringResource(R.string.panels_background), background, { background = true }, tag = "text_style_color_target_chip_background")
         }
         Row(Modifier.horizontalScroll(rememberScrollState()).padding(start = 6.dp), horizontalArrangement = Arrangement.spacedBy(20.dp), verticalAlignment = Alignment.CenterVertically) {
             Swatch(null, false, glyphPicker = true) { picker = true }
@@ -345,20 +347,20 @@ private fun ColorTab(st: TextStyle, apply: (TextStyle, Boolean) -> Unit) {
                         saved.add(0, c)
                         storeColors(ctx, saved)
                     }
-                }.semantics { contentDescription = "Save color" },
+                }.semantics { contentDescription = stringResource(R.string.panels_save_color) },
                 contentAlignment = Alignment.Center,
             ) { GlyphIcon(LucideIcons.Plus.glyph(), Fc.Body, size = 20.dp) }
             for (c in saved) Swatch(c, current == c, onLongClick = { saved.remove(c); storeColors(ctx, saved) }) { pick(c) }
         }
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             // plain icons, no pills
-            FcIconButton(LucideIcons.Copy.glyph(), "Copy hex color", { current?.let { clipboard.setText(AnnotatedString(hex(it))) } }, size = 40.dp, iconSize = 20.dp)
-            FcIconButton(LucideIcons.ClipboardPaste.glyph(), "Paste hex color", {
+            FcIconButton(LucideIcons.Copy.glyph(), stringResource(R.string.panels_copy_hex), { current?.let { clipboard.setText(AnnotatedString(hex(it))) } }, size = 40.dp, iconSize = 20.dp)
+            FcIconButton(LucideIcons.ClipboardPaste.glyph(), stringResource(R.string.panels_paste_hex), {
                 parseHex(clipboard.getText()?.text.orEmpty())?.let { pick(it) }
             }, size = 40.dp, iconSize = 20.dp)
-            Text("Hex", style = FcType.Label, color = Fc.Detail)
+            Text(stringResource(R.string.panels_hex), style = FcType.Label, color = Fc.Detail)
             Box(Modifier.border(1.dp, Fc.Divider, RoundedCornerShape(12.dp)).padding(horizontal = 14.dp, vertical = 10.dp)) {
-                Text(current?.let { hex(it) } ?: "None", style = FcType.Label, color = Fc.Title)
+                Text(current?.let { hex(it) } ?: stringResource(R.string.panels_none), style = FcType.Label, color = Fc.Title)
             }
         }
     }
@@ -408,7 +410,7 @@ private fun ColorPickerDialog(initial: Long, onDismiss: () -> Unit, onPick: (Lon
     var value by remember { mutableFloatStateOf(hsv[2]) }
     var version by remember { mutableIntStateOf(0) }
     val color = android.graphics.Color.HSVToColor(floatArrayOf(hue, sat, value)).toLong() and 0xFFFFFFFFL
-    FcDialog("Colors", "Use", { onPick(color) }, onDismiss) {
+    FcDialog(stringResource(R.string.panels_colors), stringResource(R.string.panels_use), { onPick(color) }, onDismiss) {
         Canvas(
             Modifier
                 .fillMaxWidth()
@@ -423,7 +425,7 @@ private fun ColorPickerDialog(initial: Long, onDismiss: () -> Unit, onPick: (Lon
             drawCircle(Color.White, 9.dp.toPx(), Offset(sat * size.width, (1 - value) * size.height), style = androidx.compose.ui.graphics.drawscope.Stroke(2.dp.toPx()))
         }
         Spacer(Modifier.height(16.dp))
-        FcSlider(fraction = hue / 360f, onChange = { hue = it * 360f }, description = "Hue")
+        FcSlider(fraction = hue / 360f, onChange = { hue = it * 360f }, description = stringResource(R.string.panels_hue))
         Spacer(Modifier.height(8.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(Modifier.size(32.dp).clip(CircleShape).background(Color(color)))
@@ -439,13 +441,13 @@ private fun ColorPickerDialog(initial: Long, onDismiss: () -> Unit, onPick: (Lon
 private fun LayoutTab(st: TextStyle, apply: (TextStyle, Boolean) -> Unit) {
     var width by remember(st.width) { mutableFloatStateOf(st.width.toFloat()) }
     Column(Modifier.fillMaxWidth().padding(vertical = 12.dp)) {
-        Text("Text alignment", style = FcType.Label, color = Fc.Secondary, modifier = Modifier.padding(horizontal = FcSize.PanelPadding))
+        Text(stringResource(R.string.panels_text_alignment), style = FcType.Label, color = Fc.Secondary, modifier = Modifier.padding(horizontal = FcSize.PanelPadding))
         Spacer(Modifier.height(22.dp))
         Row(Modifier.fillMaxWidth().padding(horizontal = FcSize.PanelPadding), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             for ((align, glyph, label) in listOf(
-                Triple(TextAlign.LEFT, LucideIcons.AlignLeft, "Align text left"),
-                Triple(TextAlign.CENTER, LucideIcons.AlignCenter, "Align text center"),
-                Triple(TextAlign.RIGHT, LucideIcons.AlignRight, "Align text right"),
+                Triple(TextAlign.LEFT, LucideIcons.AlignLeft, stringResource(R.string.panels_align_left)),
+                Triple(TextAlign.CENTER, LucideIcons.AlignCenter, stringResource(R.string.panels_align_center)),
+                Triple(TextAlign.RIGHT, LucideIcons.AlignRight, stringResource(R.string.panels_align_right)),
             )) {
                 val selected = st.align == align
                 Box(
@@ -463,12 +465,12 @@ private fun LayoutTab(st: TextStyle, apply: (TextStyle, Boolean) -> Unit) {
             }
         }
         Spacer(Modifier.height(32.dp))
-        SliderRow("Text width", "") {
+        SliderRow(stringResource(R.string.panels_text_width), "") {
             Spacer(Modifier.height(8.dp))
             FcSlider(
                 fraction = (width - 0.1f) / 0.9f,
                 onChange = { f -> width = Math.round((0.1f + f * 0.9f) * 100) / 100f; apply(st.copy(width = width.toDouble()), true) },
-                description = "Text width",
+                description = stringResource(R.string.panels_text_width),
                 tag = "text_style_layout_text_width_slider",
             )
         }

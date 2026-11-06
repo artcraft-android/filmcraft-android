@@ -28,11 +28,10 @@ class Engine(val session: MobileSession) {
 }
 
 /** A message for the user from anything the engine (or the system) threw. */
-val Throwable.userMessage: String
-    get() = when (this) {
-        is MobileException -> message?.takeIf { it.isNotBlank() } ?: "Something went wrong."
-        else -> message?.takeIf { it.isNotBlank() && !it.contains("Exception") } ?: "Something went wrong."
-    }
+fun Throwable.userMessage(context: android.content.Context): String =
+    (this as? MobileException)?.message?.takeIf { it.isNotBlank() }
+        ?: message?.takeIf { it.isNotBlank() && !it.contains("Exception") }
+        ?: context.getString(io.github.artcraftandroid.filmcraft.R.string.core_something_went_wrong)
 
 /** A frame's pixels as a new bitmap. */
 fun Frame.toBitmap(): Bitmap? {

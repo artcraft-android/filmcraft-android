@@ -11,6 +11,7 @@ import java.io.File
 import java.text.DateFormat
 import java.util.Date
 import java.util.UUID
+import io.github.artcraftandroid.filmcraft.R
 import org.json.JSONObject
 
 /** One project on the Home screen. */
@@ -60,7 +61,7 @@ class Projects(private val context: Context) {
             val j = JSONObject(meta.readText())
             ProjectEntry(
                 id = dir.name,
-                name = j.optString("name", "Untitled"),
+                name = j.optString("name", context.getString(R.string.core_untitled_project)),
                 opened = j.optLong("opened", 0L),
                 created = j.optLong("created", 0L),
                 duration = j.optLong("duration", 0L),
@@ -133,7 +134,7 @@ class Projects(private val context: Context) {
             file.writeText(file.readText().replace(old, new))
         }
         val now = System.currentTimeMillis()
-        val r = p.copy(id = id, name = uniqueName("${p.name} copy"), opened = now, created = now, dir = dir)
+        val r = p.copy(id = id, name = uniqueName(context.getString(R.string.core_project_copy, p.name)), opened = now, created = now, dir = dir)
         write(r)
         return r
     }
@@ -177,7 +178,7 @@ class Projects(private val context: Context) {
         }
         val out = uniqueFile(dir, safeName(name))
         resolver.openInputStream(uri)?.use { input -> out.outputStream().use { input.copyTo(it) } }
-            ?: throw java.io.FileNotFoundException("The file could not be read.")
+            ?: throw java.io.FileNotFoundException(context.getString(R.string.core_file_could_not_read))
         return out
     }
 

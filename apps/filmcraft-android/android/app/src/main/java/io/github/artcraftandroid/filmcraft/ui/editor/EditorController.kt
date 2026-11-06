@@ -11,6 +11,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import io.github.artcraftandroid.filmcraft.R
 import io.github.artcraftandroid.filmcraft.core.CaptionInfo
 import io.github.artcraftandroid.filmcraft.core.CaptionLook
 import io.github.artcraftandroid.filmcraft.core.CaptionStatus
@@ -89,6 +90,7 @@ class EditorController(
     private val projects: Projects,
     private val scope: CoroutineScope,
     private val host: EditorHost,
+    private val context: android.content.Context,
 ) {
     private val session: MobileSession get() = engine.session
 
@@ -234,7 +236,7 @@ class EditorController(
         val t = timeline ?: return
         if (t.revision.toLong() == lastSaved) return
         val path = project.projectFile.absolutePath
-        runCatching { engine.command { saveProject(path) } }.onFailure { host.tell(it.userMessage) }.onSuccess {
+        runCatching { engine.command { saveProject(path) } }.onFailure { host.tell(it.userMessage(context)) }.onSuccess {
             lastSaved = t.revision.toLong()
             val p = project.copy(duration = t.duration, width = t.width.toInt(), height = t.height.toInt(), opened = System.currentTimeMillis())
             project = p
@@ -280,7 +282,7 @@ class EditorController(
             try {
                 engine.command { block() }
             } catch (e: Exception) {
-                host.tell(e.userMessage)
+                host.tell(e.userMessage(context))
             }
             refresh()
         }
@@ -292,7 +294,7 @@ class EditorController(
             try {
                 engine.command { block() }
             } catch (e: Exception) {
-                host.tell(e.userMessage)
+                host.tell(e.userMessage(context))
             }
             refresh()
         }
@@ -431,20 +433,20 @@ class EditorController(
     fun importAndAdd(uris: List<Uri>, audio: Boolean, first: Boolean = false) {
         stop()
         scope.launch {
-            busy = "Adding media…"
+            busy = context.getString(R.string.core_adding_media)
             try {
                 val paths = withContext(Dispatchers.IO) { uris.mapNotNull { u -> runCatching { projects.importUri(project, u).absolutePath }.getOrNull() } }
                 if (paths.isEmpty()) {
-                    host.tell("That file can't be added.")
+                    host.tell(context.getString(R.string.core_file_cannot_add))
                 } else {
                     engine.command {
                         if (audio) addAudio(paths) else addMedia(paths)
                         if (first) forgetHistory()
                     }
-                    if (paths.size < uris.size) host.tell("Some files couldn't be added.")
+                    if (paths.size < uris.size) host.tell(context.getString(R.string.core_some_files_cannot_add))
                 }
             } catch (e: Exception) {
-                host.tell(e.userMessage)
+                host.tell(e.userMessage(context))
             } finally {
                 busy = null
             }
@@ -457,12 +459,12 @@ class EditorController(
         host.pick(PickKind.ReplaceVisual) { uris ->
             val u = uris.firstOrNull() ?: return@pick
             scope.launch {
-                busy = "Replacing…"
+                busy = context.getString(R.string.core_replacing)
                 try {
                     val path = withContext(Dispatchers.IO) { projects.importUri(project, u).absolutePath }
                     engine.command { replace(c.id, path) }
                 } catch (e: Exception) {
-                    host.tell(e.userMessage)
+                    host.tell(e.userMessage(context))
                 } finally {
                     busy = null
                 }
@@ -510,7 +512,7 @@ class EditorController(
             try {
                 engine.command { setTransition(from, to, preset, seconds, all) }
             } catch (e: Exception) {
-                host.tell(e.userMessage)
+                host.tell(e.userMessage(context))
             }
             refresh()
             if (preset.isNotEmpty()) previewTransition(from, to)
@@ -523,7 +525,7 @@ class EditorController(
             try {
                 engine.command { setTransitionDuration(id, seconds) }
             } catch (e: Exception) {
-                host.tell(e.userMessage)
+                host.tell(e.userMessage(context))
             }
             refresh()
             val tr = timeline?.transitions?.firstOrNull { it.id == id } ?: return@launch
@@ -552,7 +554,7 @@ class EditorController(
 
     /** Speech of [st] to hear before adding it (null when it can't be made; the user is told). */
     suspend fun previewSpeech(st: SpeechSettings): SpeechAudio? =
-        runCatching { engine.command { previewSpeech(st) } }.onFailure { host.tell(it.userMessage) }.getOrNull()
+        runCatching { engine.command { previewSpeech(st) } }.onFailure { host.tell(it.userMessage(context)) }.getOrNull()
 
     suspend fun speechSettings(clip: ULong): SpeechSettings? = runCatching { engine.command { speechSettings(clip) } }.getOrNull()
 
@@ -560,12 +562,12 @@ class EditorController(
     fun saySpeech(clip: ULong?, st: SpeechSettings) {
         stop()
         scope.launch {
-            busy = "Making speech…"
+            busy = context.getString(R.string.core_making_speech)
             try {
                 val dir = project.mediaDir.apply { mkdirs() }.absolutePath
                 engine.command { if (clip == null) addSpeech(st, dir) else editSpeech(clip, st, dir) }
             } catch (e: Exception) {
-                host.tell(e.userMessage)
+                host.tell(e.userMessage(context))
             } finally {
                 busy = null
             }
@@ -584,7 +586,7 @@ class EditorController(
     fun makeCaptions(model: String, language: String) {
         if (captionProgress != null) return
         stop()
-        captionProgress = CaptionStatus(0.0, "Getting ready…", false, null, 0u)
+        captionProgress = CaptionStatus(0.0, context.getString(R.string.core_getting_ready), false, null, 0u)
         scope.launch {
             try {
                 val job = engine.command { startCaptions(model, language) }
@@ -596,14 +598,14 @@ class EditorController(
                         when {
                             st.error == "cancelled" -> {}
                             st.error != null -> host.tell(st.error ?: "")
-                            st.captions == 0u -> host.tell("No speech was heard, so there are no captions.")
+                            st.captions == 0u -> host.tell(context.getString(R.string.core_no_speech_heard))
                         }
                         break
                     }
                     delay(300)
                 }
             } catch (e: Exception) {
-                host.tell(e.userMessage)
+                host.tell(e.userMessage(context))
             } finally {
                 captionJob = null
                 captionProgress = null
@@ -692,7 +694,7 @@ class EditorController(
                     ids.firstOrNull()?.let(onAdded)
                 }
             } catch (e: Exception) {
-                host.tell(e.userMessage)
+                host.tell(e.userMessage(context))
             }
             refresh()
         }
@@ -708,7 +710,7 @@ class EditorController(
         stop()
         val d = duration
         if (d < frameTicks * 5) {
-            host.tell("Add at least a few frames to the timeline to export.")
+            host.tell(context.getString(R.string.core_export_needs_frames))
             return
         }
         host.export()

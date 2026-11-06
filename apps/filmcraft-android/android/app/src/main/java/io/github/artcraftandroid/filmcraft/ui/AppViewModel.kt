@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import io.github.artcraftandroid.filmcraft.R
 import io.github.artcraftandroid.filmcraft.FilmcraftApplication
 import io.github.artcraftandroid.filmcraft.core.ExportQuality
 import io.github.artcraftandroid.filmcraft.core.ExportSettings
@@ -93,7 +94,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app), EditorHost {
         viewModelScope.launch {
             getApplication<FilmcraftApplication>().engine.await()
                 .onSuccess { engine = it }
-                .onFailure { engineProblem = it.userMessage }
+                .onFailure { engineProblem = it.userMessage(appCtx) }
             refreshProjects()
         }
     }
@@ -142,11 +143,14 @@ class AppViewModel(app: Application) : AndroidViewModel(app), EditorHost {
         }
     }
 
+    /** Application context for resolving strings. */
+    private val appCtx: Application get() = getApplication()
+
     // ---- projects ----
 
     /** Start a project the way a Home tile (or the + button) says. */
     fun newProject(how: NewProject) {
-        val e = engine ?: return tell(engineProblem ?: "The editor is still starting.")
+        val e = engine ?: return tell(engineProblem ?: appCtx.getString(R.string.core_editor_still_starting))
         when (how) {
             NewProject.Blank -> viewModelScope.launch {
                 val (w, h) = 1080 to 1920
@@ -212,7 +216,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app), EditorHost {
     }
 
     fun openProject(p: ProjectEntry) {
-        val e = engine ?: return tell(engineProblem ?: "The editor is still starting.")
+        val e = engine ?: return tell(engineProblem ?: appCtx.getString(R.string.core_editor_still_starting))
         viewModelScope.launch { open(e, p, fresh = false) }
     }
 
@@ -220,12 +224,12 @@ class AppViewModel(app: Application) : AndroidViewModel(app), EditorHost {
         opening = true
         try {
             val entry = withContext(Dispatchers.IO) { projects.touch(p) }
-            val ed = EditorController(e, entry, projects, viewModelScope, this)
+            val ed = EditorController(e, entry, projects, viewModelScope, this, appCtx)
             ed.load(fresh)
             editor = ed
             screen = Screen.Editor
         } catch (ex: Exception) {
-            tell(ex.userMessage)
+            tell(ex.userMessage(appCtx))
         } finally {
             opening = false
         }
@@ -252,7 +256,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app), EditorHost {
 
     fun duplicate(p: ProjectEntry) {
         viewModelScope.launch {
-            runCatching { withContext(Dispatchers.IO) { projects.duplicate(p) } }.onFailure { tell(it.userMessage) }
+            runCatching { withContext(Dispatchers.IO) { projects.duplicate(p) } }.onFailure { tell(it.userMessage(appCtx)) }
             refreshProjects()
         }
     }
@@ -276,7 +280,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app), EditorHost {
         val dir = File(ctx.cacheDir, "export").apply { mkdirs() }
         dir.listFiles()?.forEach { it.delete() }
         if (plan != null && dir.usableSpace < plan.estimatedBytes.toLong() * 3 / 2 + 50L * 1024 * 1024) {
-            tell("There isn't enough space on the phone for this video. Free some space or lower the resolution or quality.")
+            tell(appCtx.getString(R.string.core_not_enough_space))
             return
         }
         // the project's name, with only the characters a file name can't hold replaced
@@ -293,7 +297,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app), EditorHost {
                     if (st.finished) {
                         if (st.error != null) {
                             out.delete()
-                            exportPhase = if (st.error == "cancelled") ExportPhase.Settings else ExportPhase.Failed(st.error ?: "The export failed.")
+                            exportPhase = if (st.error == "cancelled") ExportPhase.Settings else ExportPhase.Failed(st.error ?: appCtx.getString(R.string.core_export_failed))
                         } else {
                             val uri = withContext(Dispatchers.IO) { saveToMovies(out, name) }
                             exportPhase = ExportPhase.Done(uri, out.absolutePath)
@@ -306,7 +310,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app), EditorHost {
                 }
             } catch (e: Exception) {
                 out.delete()
-                exportPhase = ExportPhase.Failed(e.userMessage)
+                exportPhase = ExportPhase.Failed(e.userMessage(appCtx))
             } finally {
                 exportEngineJob = null
                 // the export's frame buffers are kept for another export; give them back now
@@ -332,9 +336,9 @@ class AppViewModel(app: Application) : AndroidViewModel(app), EditorHost {
             put(MediaStore.Video.Media.RELATIVE_PATH, Environment.DIRECTORY_MOVIES)
             put(MediaStore.Video.Media.IS_PENDING, 1)
         }
-        val uri = resolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values) ?: throw java.io.IOException("The video couldn't be saved to the phone.")
+        val uri = resolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values) ?: throw java.io.IOException(appCtx.getString(R.string.core_video_could_not_save))
         try {
-            resolver.openOutputStream(uri)?.use { o -> file.inputStream().use { it.copyTo(o) } } ?: throw java.io.IOException("The video couldn't be saved to the phone.")
+            resolver.openOutputStream(uri)?.use { o -> file.inputStream().use { it.copyTo(o) } } ?: throw java.io.IOException(appCtx.getString(R.string.core_video_could_not_save))
             resolver.update(uri, ContentValues().apply { put(MediaStore.Video.Media.IS_PENDING, 0) }, null, null)
         } catch (e: Exception) {
             resolver.delete(uri, null, null)
@@ -351,7 +355,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app), EditorHost {
             return
         }
         viewModelScope.launch {
-            val e = getApplication<FilmcraftApplication>().engine.await().getOrNull() ?: return@launch tell(engineProblem ?: "The editor couldn't start.")
+            val e = getApplication<FilmcraftApplication>().engine.await().getOrNull() ?: return@launch tell(engineProblem ?: appCtx.getString(R.string.core_editor_could_not_start))
             val (w, h) = withContext(Dispatchers.IO) { frameFor(uris.first()) }
             val p = withContext(Dispatchers.IO) { projects.create(projects.todaysName(), w, h) }
             open(e, p, fresh = true)
